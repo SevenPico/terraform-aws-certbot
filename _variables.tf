@@ -18,4 +18,15 @@
 ##  ./_variables.tf
 ##  This file contains code written only by SevenPico, Inc.
 ## ----------------------------------------------------------------------------
+variable "secret_arn" {
+  type = string
+}
 
+variable "kms_key_arn" {
+  type = string
+}
+
+variable "cron_expression" {
+  type = string
+  default = "0 18 L * ? *"
+}
