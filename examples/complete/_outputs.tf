@@ -15,10 +15,7 @@
 ## ----------------------------------------------------------------------------
 
 ## ----------------------------------------------------------------------------
-##  ./examples/complete/_providers.tf
-##  This file contains code written only by SevenPico, Inc.
+##  ./examples/acm-only/_outputs.tf
+##  This file contains code written by SevenPico, Inc.
 ## ----------------------------------------------------------------------------
 
-provider "aws" {
-  region = "us-east-1"
-}

@@ -23,7 +23,7 @@ def rm_tmp_dir():
             os.remove(CERTBOT_DIR)
 
 
-def obtain_certs(emails, domains, dns_plugin):
+def obtain_certs():
     certbot_args = [
         # Override directory paths so script doesn't have to be run as root
         '--config-dir', CERTBOT_DIR,
@@ -40,17 +40,17 @@ def obtain_certs(emails, domains, dns_plugin):
         '--agree-tos',
 
         # Email of domain administrators
-        '--email', emails,
+        '--email', config.emails,
 
         # Use dns challenge with dns plugin
-        '--authenticator', dns_plugin,
+        '--authenticator', config.dns_plugin,
         '--preferred-challenges', 'dns-01',
 
         # Use this server instead of default acme-v01
         '--server', CERTBOT_SERVER,
 
         # Domains to provision certs for (comma separated)
-        '--domains', domains,
+        '--domains', config.domains,
     ]
     return certbot.main.main(certbot_args)
 
@@ -64,19 +64,19 @@ def obtain_certs(emails, domains, dns_plugin):
 # │       ├── fullchain.pem
 # │       └── privkey.pem
 def upload_certs():
-    with open("/tmp/cert.pem") as f:
+    with open(f"/tmp/certbot/live/${config.domains}/cert.pem") as f:
         cert = f.read()
-    with open("/tmp/privkey.pem") as f:
+    with open(f"/tmp/certbot/live/${config.domains}/privkey.pem") as f:
         privkey = f.read()
-    with open("/tmp/chain.pem") as f:
+    with open(f"/tmp/certbot/live/${config.domains}/chain.pem") as f:
         chain = f.read()
 
     secret_data = {
-        "cert": cert,
-        "privkey": privkey,
-        "chain": chain,
+        "CERTIFICATE": cert,
+        "CERTIFICATE_PRIVATE_KEY": privkey,
+        "CERTIFICATE_CHAIN": chain,
     }
     client = boto3.client('secretsmanager')
     secret_value = json.dumps(secret_data)
-    client.update_secret(SecretId=config.secret_arn, SecretString=secret_value)
+    client.update_secret(SecretId=config.secret_arn, KmsKeyId=config.kms_key_arn, SecretString=secret_value)
 

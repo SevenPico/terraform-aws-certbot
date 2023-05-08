@@ -21,6 +21,7 @@ def get_required_var(name):
 @dataclass
 class Config:
     secret_arn = get_optional_var('SECRET_ARN')
+    kms_key_arn = get_optional_var('KMS_KEY_ARN')
     emails = get_optional_var('EMAILS')
     domains = get_optional_var('DOMAINS')
     dns_plugin = get_optional_var('DNS_PLUGIN')

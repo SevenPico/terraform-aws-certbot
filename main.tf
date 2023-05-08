@@ -45,7 +45,14 @@ module "certbot_lambda" {
   image_uri                           = null
   kms_key_arn                         = ""
   lambda_at_edge                      = false
-  lambda_environment                  = {}       #need to add variables
+  lambda_environment                  = {
+    variables = merge({
+      SECRET_ARN : var.secret_arn
+      KMS_KEY_ARN : var.kms_key_arn
+      DOMAINS : var.create_wildcard ? "*.${module.context.domain_name}" : module.context.domain_name
+      DNS_PLUGIN : var.dns_plugin
+    })
+  }
   lambda_role_source_policy_documents = []
   layers                              = []
   memory_size                         = 512
@@ -117,7 +124,7 @@ module "certbot_lambda_policy" {
 # Cloudwatch Event Rule
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_cloudwatch_event_rule" "default" {
-  name_prefix         = ""     #need to add
+  name_prefix         = "Certbot"
   description         = "Triggers lambda function ${module.certbot_lambda.function_name} on a regular schedule."
   schedule_expression = "cron(${var.cron_expression})"   #need to check
 }

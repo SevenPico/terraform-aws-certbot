@@ -18,26 +18,12 @@
 ##  ./_variables.tf
 ##  This file contains code written only by SevenPico, Inc.
 ## ----------------------------------------------------------------------------
-variable "secret_arn" {
-  type = string
+variable "kms_key_deletion_window_in_days" {
+  type    = number
+  default = 30
 }
 
-variable "kms_key_arn" {
-  type = string
+variable "kms_key_enable_key_rotation" {
+  type    = bool
+  default = true
 }
-
-variable "cron_expression" {
-  type = string
-  default = "0 18 L * ? *"
-}
-
-variable "dns_plugin" {
-  description = "The dns plugin for certbot."
-  type        = string
-  default     = "dns-route53"
-}
-
-variable "create_wildcard" {
-   type        = bool
-   default     = true
- }
