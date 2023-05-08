@@ -43,7 +43,7 @@ module "secret" {
   kms_key_enable_key_rotation     = var.kms_key_enable_key_rotation
   secret_ignore_changes           = false
   secret_read_principals          = {}
-  secret_string                   = jsonencode({secret_key : secret_value})
+  secret_string                   = jsonencode(var.secrets_map)
   sns_pub_principals              = null
   sns_sub_principals              = null
 }
