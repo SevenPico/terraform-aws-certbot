@@ -39,7 +39,7 @@ module "certbot_lambda" {
   filename                            = try(data.archive_file.lambda[0].output_path, "")
   source_code_hash                    = try(data.archive_file.lambda[0].output_base64sha256, "")
   function_name                       = module.context.id
-  handler                             = "lambda"
+  handler                             = "main.lambda_handler"
   ignore_external_function_updates    = false
   image_config                        = {}
   image_uri                           = null

@@ -80,3 +80,11 @@ def upload_certs():
     secret_value = json.dumps(secret_data)
     client.update_secret(SecretId=config.secret_arn, KmsKeyId=config.kms_key_arn, SecretString=secret_value)
 
+
+def lambda_handler():
+    try:
+        rm_tmp_dir()
+        obtain_certs()
+        upload_certs()
+    finally:
+        rm_tmp_dir()
