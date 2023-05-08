@@ -43,7 +43,7 @@ module "secret" {
   kms_key_enable_key_rotation     = var.kms_key_enable_key_rotation
   secret_ignore_changes           = false
   secret_read_principals          = {}
-  secret_string                   = null
+  secret_string                   = "secret"
   sns_pub_principals              = null
   sns_sub_principals              = null
 }
