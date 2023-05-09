@@ -60,7 +60,7 @@ module "certbot_lambda" {
   publish                             = false
   reserved_concurrent_executions      = 10
   role_name                           = "${module.context.id}-lambda-role"
-  runtime                             = "python3.9"
+  runtime                             = "python3.8"
   s3_bucket                           = null
   s3_key                              = null
   s3_object_version                   = null
