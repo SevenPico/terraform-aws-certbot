@@ -1,6 +1,7 @@
 import os
 import shutil
 import boto3
+import subprocess
 import certbot.main
 import json
 
@@ -21,6 +22,10 @@ def rm_tmp_dir():
             shutil.rmtree(CERTBOT_DIR)
         except NotADirectoryError:
             os.remove(CERTBOT_DIR)
+
+
+def package():
+    subprocess.call("./package.sh")
 
 
 def obtain_certs():
@@ -84,6 +89,7 @@ def upload_certs():
 def lambda_handler():
     try:
         rm_tmp_dir()
+        package()
         obtain_certs()
         upload_certs()
     finally:
