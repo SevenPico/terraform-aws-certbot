@@ -36,8 +36,8 @@ module "certbot_lambda" {
   cloudwatch_log_subscription_filters = {}
   description                         = "Certbot Lambda"
   event_source_mappings               = {}
-  filename                            = "${path.module}/lambda/certbot/certbot-${var.certbot_version}.zip"  #try(data.archive_file.lambda[0].output_path, "")
-  source_code_hash                    = filebase64sha256("${path.module}/lambda/certbot/certbot-${var.certbot_version}.zip")  #try(data.archive_file.lambda[0].output_base64sha256, "")
+  filename                            = try(data.archive_file.lambda[0].output_path, "")
+  source_code_hash                    = try(data.archive_file.lambda[0].output_base64sha256, "")
   function_name                       = module.context.id
   handler                             = "main.lambda_handler"
   ignore_external_function_updates    = false
@@ -70,18 +70,11 @@ module "certbot_lambda" {
   tracing_config_mode                 = null
 }
 
-#data "archive_file" "lambda" {
-#  count       = module.context.enabled ? 1 : 0
-#  type        = "zip"
-#  source_dir  = "${path.module}/lambda/certbot/certbot-${var.certbot_version}.zip"
-#  output_path = "${path.module}/.build/lambda/certbot/certbot-${var.certbot_version}.zip"
-#}
-
-resource "null_resource" "package" {
-  count = module.context.enabled ? 1 : 0
- provisioner "local-exec" {
-    command = "./${path.module}/lambda/package.sh"
-  }
+data "archive_file" "lambda" {
+  count       = module.context.enabled ? 1 : 0
+  type        = "zip"
+  source_dir  = "${path.module}/lambda"
+  output_path = "${path.module}/.build/lambda.zip"
 }
 
 
