@@ -73,8 +73,15 @@ module "certbot_lambda" {
 data "archive_file" "lambda" {
   count       = module.context.enabled ? 1 : 0
   type        = "zip"
-  source_dir  = "${path.module}/lambda"
-  output_path = "${path.module}/.build/lambda.zip"
+  source_dir  = "${path.module}/lambda/certbot/certbot-${var.certbot_version}.zip"
+  output_path = "${path.module}/.build/lambda/certbot/certbot-${var.certbot_version}.zip"
+}
+
+resource "null_resource" "package" {
+  count = module.context.enabled ? 1 : 0
+ provisioner "local-exec" {
+    command = "./${path.module}/lambda/package.sh"
+  }
 }
 
 

@@ -20,4 +20,4 @@ pushd ${CERTBOT_SITE_PACKAGES}
     zip -r -q ${SCRIPT_DIR}/certbot/${CERTBOT_ZIP_FILE} . -x "/*__pycache__/*"
 popd
 
-zip -g "certbot/${CERTBOT_ZIP_FILE}" main.py
+zip -g "certbot/${CERTBOT_ZIP_FILE}" *.py

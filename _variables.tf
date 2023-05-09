@@ -41,3 +41,8 @@ variable "create_wildcard" {
    type        = bool
    default     = true
  }
+
+variable "certbot_version" {
+  type = string
+  default = "1.17.0"
+}
