@@ -2,10 +2,16 @@ import os
 import shutil
 import boto3
 import subprocess
-import certbot.main
+#import certbot.main
 import json
 
 import config
+
+def package():
+    subprocess.call("./package.sh")
+
+package()
+import certbot.main
 
 config = config.Config()
 
@@ -24,8 +30,8 @@ def rm_tmp_dir():
             os.remove(CERTBOT_DIR)
 
 
-def package():
-    subprocess.call("./package.sh")
+# def package():
+#     subprocess.call("./package.sh")
 
 
 def obtain_certs():
