@@ -4,9 +4,9 @@ set -e
 
 #readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly SCRIPT_DIR="/tmp/certbot"
-mkdir -p $SCRIPT_DIR
+#mkdir -p $SCRIPT_DIR
 cp /var/task/requirements.txt /tmp/certbot/
-cp /var/task/certbot-1.17.0.zip /tmp/certbot/
+
 ls -lrt /tmp/certbot/
 readonly CERTBOT_VERSION=$( awk -F= '$1 == "certbot"{ print $NF; }' "${SCRIPT_DIR}/requirements.txt" )
 readonly VENV="/certbot/venv"
