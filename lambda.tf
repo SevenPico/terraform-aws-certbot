@@ -101,11 +101,11 @@ module "certbot_lambda_policy" {
   iam_source_policy_documents   = null
 
   iam_policy_statements = {
-    AssumeRole = {
-      effect    = "Allow"
-      actions = ["sts:AssumeRole"]
-      resources = ["*"]   #FIXME need to change resources
-    }
+#    AssumeRole = {
+#      effect    = "Allow"
+#      actions = ["sts:AssumeRole"]
+#      resources = ["*"]   #FIXME need to change resources
+#    }
     AllowSslSecretRead = {
       effect    = "Allow"
       actions   = [
