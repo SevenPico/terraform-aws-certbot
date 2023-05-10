@@ -49,12 +49,4 @@ module "efs" {
   zone_id                              = []
 }
 
-resource "aws_route53_record" "efs" {
-  count   = module.efs_context.enabled ? 1 : 0
-  zone_id = var.route53_private_zone_id
-  type    = "CNAME"
-  name    = module.efs_context.dns_name
-  records = [one(module.efs[*].dns_name)]
-  ttl     = 300
-}
 */

@@ -17,6 +17,6 @@ module "certbot" {
   source  = "../../"
   context = module.certbot_context.self
 
-  kms_key_arn = module.secret.kms_key_arn
-  secret_arn = module.secret.arn
+  target_secret_kms_key_arn = module.secret.kms_key_arn
+  target_secret_arn = module.secret.arn
 }

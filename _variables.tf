@@ -18,11 +18,11 @@
 ##  ./_variables.tf
 ##  This file contains code written only by SevenPico, Inc.
 ## ----------------------------------------------------------------------------
-variable "secret_arn" {
+variable "target_secret_arn" {
   type = string
 }
 
-variable "kms_key_arn" {
+variable "target_secret_kms_key_arn" {
   type = string
 }
 

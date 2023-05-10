@@ -1,12 +1,12 @@
 import os
 import shutil
 import boto3
-#import subprocess
-import certbot.main
+import subprocess
 import json
+import sys
+#import certbot.main
 
 import config
-
 
 config = config.Config()
 
@@ -24,9 +24,16 @@ def rm_tmp_dir():
         except NotADirectoryError:
             os.remove(CERTBOT_DIR)
 
-
-#def package():
-    #subprocess.call("./package.sh")
+def package():
+    # Copy package.sh to /tmp
+    #shutil.copy2('./requirements.txt', '/tmp/certbot/requirements.txt')
+    subprocess.call(['sh', './package.sh'])
+    print('package ran')
+    if os.path.exists(CERTBOT_DIR):
+        try:
+            print('path exists')
+        except NotADirectoryError:
+            print('path doesnt exist')
 
 
 def obtain_certs():
@@ -70,11 +77,11 @@ def obtain_certs():
 # │       ├── fullchain.pem
 # │       └── privkey.pem
 def upload_certs():
-    with open(f"/tmp/certbot/live/${config.domains}/cert.pem") as f:
+    with open(f"/tmp/certbot/live/{config.domains}/cert.pem") as f:
         cert = f.read()
-    with open(f"/tmp/certbot/live/${config.domains}/privkey.pem") as f:
+    with open(f"/tmp/certbot/live/{config.domains}/privkey.pem") as f:
         privkey = f.read()
-    with open(f"/tmp/certbot/live/${config.domains}/chain.pem") as f:
+    with open(f"/tmp/certbot/live/{config.domains}/chain.pem") as f:
         chain = f.read()
 
     secret_data = {
@@ -87,11 +94,13 @@ def upload_certs():
     client.update_secret(SecretId=config.secret_arn, KmsKeyId=config.kms_key_arn, SecretString=secret_value)
 
 
-def lambda_handler():
+def lambda_handler(event, context):
     try:
         rm_tmp_dir()
-        #package()
-        obtain_certs()
-        upload_certs()
+        package()
+        #import certbot.main
+        #obtain_certs()
+        #upload_certs()
     finally:
         rm_tmp_dir()
+        print('end')
