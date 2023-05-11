@@ -14,10 +14,10 @@ module "certbot_context" {
 # Certbot
 #------------------------------------------------------------------------------
 module "certbot" {
-  source  = "../../"
-  context = module.certbot_context.self
+  source                    = "../../"
+  context                   = module.certbot_context.self
   target_secret_kms_key_arn = module.secret.kms_key_arn
-  target_secret_arn = module.secret.arn
-  vpc_id = module.vpc.vpc_id
-  vpc_private_subnet_ids = module.vpc_subnets.private_subnet_ids
+  target_secret_arn         = module.secret.arn
+  vpc_id                    = module.vpc.vpc_id
+  vpc_private_subnet_ids    = module.vpc_subnets.private_subnet_ids
 }
