@@ -41,7 +41,7 @@ module "lambda" {
   source_code_hash                    = try(data.archive_file.lambda[0].output_base64sha256, "")
   file_system_config                  = {
     local_mount_path = "/mnt/efs"
-    arn              = try(module.efs.access_point_arns, "")
+    arn              = join("", module.efs.access_point_arns)
   }
   function_name                       = module.context.id
   handler                             = "main.lambda_handler"
