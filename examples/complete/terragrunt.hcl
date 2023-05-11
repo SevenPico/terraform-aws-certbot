@@ -2,7 +2,7 @@ locals {
   account_id  = get_aws_account_id()
   tenant      = "Brim"
 
-  region = "us-east-1"   #get_env("AWS_REGION")
+  region = get_env("AWS_REGION")
   root_domain = "modules.thebrim.io"
 
   namespace   = "brim"

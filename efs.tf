@@ -22,7 +22,7 @@ module "efs" {
   vpc_id  = var.vpc_id
 
   #optional
-  access_points                        = var.access_points
+  access_points                        = {}
   additional_security_group_rules      = []
   allowed_cidr_blocks                  = []
   allowed_security_group_ids           = []   #FIXME need to check
@@ -45,4 +45,20 @@ module "efs" {
   transition_to_ia                     = ["AFTER_30_DAYS"]
   transition_to_primary_storage_class  = []
   zone_id                              = []
+}
+
+resource "aws_efs_access_point" "default" {
+  file_system_id = module.efs.id
+  root_directory {
+    path = "/lambda"
+    creation_info {
+      owner_gid   = 1000
+      owner_uid   = 1000
+      permissions = "777"
+    }
+  }
+  posix_user {
+    gid = 1000
+    uid = 1000
+  }
 }
