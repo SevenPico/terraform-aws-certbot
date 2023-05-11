@@ -32,3 +32,10 @@ variable "secrets_map" {
   type    = map(string)
   default = {}
 }
+
+variable "vpc_cidr_block" {
+  type = string
+}
+variable "availability_zones" {
+  type = list(string)
+}

@@ -1,4 +1,3 @@
-/*
 #------------------------------------------------------------------------------
 # EFS Module context
 #------------------------------------------------------------------------------
@@ -23,10 +22,10 @@ module "efs" {
   vpc_id  = var.vpc_id
 
   #optional
-  access_points                        = {}
+  access_points                        = var.access_points
   additional_security_group_rules      = []
   allowed_cidr_blocks                  = []
-  allowed_security_group_ids           = concat([module.ecs_sonarqube_service.security_group_id, var.openvpn_security_group_id])
+  allowed_security_group_ids           = []   #FIXME need to check
   associated_security_group_ids        = []
   availability_zone_name               = null
   create_security_group                = true
@@ -48,5 +47,3 @@ module "efs" {
   transition_to_primary_storage_class  = []
   zone_id                              = []
 }
-
-*/

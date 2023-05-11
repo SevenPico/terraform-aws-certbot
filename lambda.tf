@@ -23,8 +23,9 @@
 # Certbot Lambda
 # ---------------------------------------------------------------------------------------------------------------------
 module "lambda" {
-  source     = "SevenPicoForks/lambda-function/aws"
-  version    = "2.0.1"
+  #source     = "SevenPicoForks/lambda-function/aws"
+  #version    = "2.0.1"
+  source = "git::https://github.com/SevenPicoForks/terraform-aws-lambda-function.git?ref=hotfix/add_file_system"
   context    = module.context.self
   attributes = ["lambda"]
 
@@ -34,10 +35,14 @@ module "lambda" {
   cloudwatch_logs_kms_key_arn         = ""
   cloudwatch_logs_retention_in_days   = 90
   cloudwatch_log_subscription_filters = {}
-  description                         = "Certbot Lambda"  #FIXME
+  description                         = "Lambda function to get certificate using Certbot and store it in SSL secrets"
   event_source_mappings               = {}
   filename                            = try(data.archive_file.lambda[0].output_path, "")
   source_code_hash                    = try(data.archive_file.lambda[0].output_base64sha256, "")
+  file_system_config                  = {
+    local_mount_path = "/mnt/efs"
+    arn              = module.efs.access_point_arns
+  }
   function_name                       = module.context.id
   handler                             = "main.lambda_handler"
   ignore_external_function_updates    = false
@@ -101,11 +106,6 @@ module "certbot_lambda_policy" {
   iam_source_policy_documents   = null
 
   iam_policy_statements = {
-#    AssumeRole = {
-#      effect    = "Allow"
-#      actions = ["sts:AssumeRole"]
-#      resources = ["*"]   #FIXME need to change resources
-#    }
     AllowSslSecretRead = {
       effect    = "Allow"
       actions   = [
@@ -121,6 +121,15 @@ module "certbot_lambda_policy" {
       ]
       resources = [var.target_secret_kms_key_arn]
     }
+    AllowRoute53Access = {
+    effect = "Allow"
+    actions = [
+      "route53:ListHostedZones",
+      "route53:GetChange",
+      "route53:ChangeResourceRecordSets"
+    ]
+    resources = ["*"]
+  }
   }
 }
 
