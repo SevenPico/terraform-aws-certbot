@@ -122,14 +122,38 @@ module "certbot_lambda_policy" {
       resources = [var.target_secret_kms_key_arn]
     }
     AllowRoute53Access = {
-    effect = "Allow"
-    actions = [
-      "route53:ListHostedZones",
-      "route53:GetChange",
-      "route53:ChangeResourceRecordSets"
-    ]
-    resources = ["*"]
-  }
+      effect = "Allow"
+      actions = [
+        "route53:ListHostedZones",
+        "route53:GetChange",
+        "route53:ChangeResourceRecordSets"
+      ]
+      resources = ["*"]
+    }
+    AllowVpcAccess = {
+      effect = "Allow"
+      actions = [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "ec2:CreateNetworkInterface",
+        "ec2:DescribeNetworkInterfaces",
+        "ec2:DeleteNetworkInterface",
+        "ec2:AssignPrivateIpAddresses",
+        "ec2:UnassignPrivateIpAddresses"
+      ]
+      resources = ["*"]
+    }
+    AllowEfsAccess = {
+      effect = "Allow"
+      actions = [
+        "elasticfilesystem:ClientMount",
+        "elasticfilesystem:ClientRootAccess",
+        "elasticfilesystem:ClientWrite",
+        "elasticfilesystem:DescribeMountTargets"
+      ]
+      resources = ["*"]
+    }
   }
 }
 
