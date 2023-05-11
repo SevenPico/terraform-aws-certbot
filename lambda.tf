@@ -73,6 +73,10 @@ module "lambda" {
   ssm_parameter_names                 = null
   timeout                             = 300
   tracing_config_mode                 = null
+  vpc_config = {
+    security_group_ids = [module.efs.security_group_id]
+    subnet_ids         = [var.vpc_private_subnet_ids]
+  }
 }
 
 data "archive_file" "lambda" {
