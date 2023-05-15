@@ -84,9 +84,6 @@ def upload_into_efs():
         shutil.rmtree(destination_dir)
         print(os.listdir('/mnt/efs'))
 
-    #os.makedirs(destination_dir)
-    #print(os.listdir('/mnt/efs'))
-    #print(os.listdir(destination_dir))
     shutil.copytree(CERTBOT_DIR, destination_dir)
     print(os.listdir('/mnt/efs'))
     print(os.listdir(destination_dir))
