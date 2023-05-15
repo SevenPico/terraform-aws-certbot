@@ -54,7 +54,7 @@ module "lambda" {
     variables = merge({
       SECRET_ARN : var.target_secret_arn
       KMS_KEY_ARN : var.target_secret_kms_key_arn
-      DOMAINS : var.create_wildcard ? "*.${module.context.domain_name}" : module.context.domain_name
+      DOMAINS : module.context.domain_name
     })
   }
   lambda_role_source_policy_documents = []
@@ -64,7 +64,7 @@ module "lambda" {
   publish                             = false
   reserved_concurrent_executions      = 10
   role_name                           = "${module.context.id}-lambda-role"
-  runtime                             = "python3.8"
+  runtime                             = "python3.9"
   s3_bucket                           = null
   s3_key                              = null
   s3_object_version                   = null
