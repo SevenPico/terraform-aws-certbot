@@ -113,13 +113,15 @@ module "certbot_lambda_policy" {
       effect    = "Allow"
       actions   = [
         "secretsmanager:GetSecretValue",
-        "secretsmanager:PutSecretValue"
+        "secretsmanager:PutSecretValue",
+        "secretsmanager:UpdateSecret"
       ]
       resources = [var.target_secret_arn]
     }
     AllowSslSecretKeyAccess = {
       effect    = "Allow"
       actions   = [
+        "kms:GenerateDataKey",
         "kms:Decrypt"
       ]
       resources = [var.target_secret_kms_key_arn]
