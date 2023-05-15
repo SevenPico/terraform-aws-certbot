@@ -80,7 +80,10 @@ def upload_certs(secret_arn, kms_key_arn, domains):
 
 def upload_into_efs():
     destination_dir = '/mnt/efs/certbot'
-    shutil.copytree(CERTBOT_DIR, destination_dir)
+    for item in os.listdir(CERTBOT_DIR):
+        source_path = os.path.join(CERTBOT_DIR, item)
+        destination_path = os.path.join(destination_dir, item)
+        shutil.copy2(source_path, destination_path)
     print(os.listdir('/mnt/efs'))
     print(os.listdir(destination_dir))
 
