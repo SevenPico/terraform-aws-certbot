@@ -37,8 +37,8 @@ module "lambda" {
   cloudwatch_log_subscription_filters = {}
   description                         = "Lambda function to get certificate using Certbot and store it in SSL secrets"
   event_source_mappings               = {}
-  filename                            = try(data.archive_file.lambda[0].output_path, "")
-  source_code_hash                    = try(data.archive_file.lambda[0].output_base64sha256, "")
+  filename                            = "${path.module}/lambda/certbot-1.17.0.zip"  #try(data.archive_file.lambda[0].output_path, "")
+  source_code_hash                    = filebase64sha256("${path.module}/lambda/certbot-1.17.0.zip")  #try(data.archive_file.lambda[0].output_base64sha256, "")
   file_system_config                  = {
     local_mount_path = "/mnt/efs"
     arn              = aws_efs_access_point.default.arn
@@ -55,7 +55,6 @@ module "lambda" {
       SECRET_ARN : var.target_secret_arn
       KMS_KEY_ARN : var.target_secret_kms_key_arn
       DOMAINS : var.create_wildcard ? "*.${module.context.domain_name}" : module.context.domain_name
-      DNS_PLUGIN : var.dns_plugin
     })
   }
   lambda_role_source_policy_documents = []
@@ -79,12 +78,12 @@ module "lambda" {
   }
 }
 
-data "archive_file" "lambda" {
-  count       = module.context.enabled ? 1 : 0
-  type        = "zip"
-  source_dir  = "${path.module}/lambda"
-  output_path = "${path.module}/.build/lambda.zip"
-}
+#data "archive_file" "lambda" {
+#  count       = module.context.enabled ? 1 : 0
+#  type        = "zip"
+#  source_dir  = "${path.module}/lambda"
+#  output_path = "${path.module}/.build/lambda.zip"
+#}
 
 
 # ------------------------------------------------------------------------------

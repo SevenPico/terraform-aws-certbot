@@ -1,14 +1,10 @@
+#!/usr/bin/env python3
+
 import os
 import shutil
 import boto3
-import subprocess
+import certbot.main
 import json
-import sys
-#import certbot.main
-
-import config
-
-config = config.Config()
 
 # Let’s Encrypt acme-v02 server that supports wildcard certificates
 CERTBOT_SERVER = 'https://acme-v02.api.letsencrypt.org/directory'
@@ -24,19 +20,8 @@ def rm_tmp_dir():
         except NotADirectoryError:
             os.remove(CERTBOT_DIR)
 
-def package():
-    # Copy package.sh to /tmp
-    #shutil.copy2('./requirements.txt', '/tmp/certbot/requirements.txt')
-    subprocess.call(['sh', './package.sh'])
-    print('package ran')
-    if os.path.exists(CERTBOT_DIR):
-        try:
-            print('path exists')
-        except NotADirectoryError:
-            print('path doesnt exist')
 
-
-def obtain_certs():
+def obtain_certs(domains):
     certbot_args = [
         # Override directory paths so script doesn't have to be run as root
         '--config-dir', CERTBOT_DIR,
@@ -53,17 +38,16 @@ def obtain_certs():
         '--agree-tos',
 
         # Email of domain administrators
-        '--email', config.emails,
+        '--register-unsafely-without-email',
 
         # Use dns challenge with dns plugin
-        '--authenticator', config.dns_plugin,
-        '--preferred-challenges', 'dns-01',
+        '--dns-route53',
 
         # Use this server instead of default acme-v01
         '--server', CERTBOT_SERVER,
 
         # Domains to provision certs for (comma separated)
-        '--domains', config.domains,
+        '--domains', domains,
     ]
     return certbot.main.main(certbot_args)
 
@@ -76,12 +60,12 @@ def obtain_certs():
 # │       ├── chain.pem
 # │       ├── fullchain.pem
 # │       └── privkey.pem
-def upload_certs():
-    with open(f"/tmp/certbot/live/{config.domains}/cert.pem") as f:
+def upload_certs(secret_arn, kms_key_arn, domains):
+    with open(f"{CERTBOT_DIR}/live/{domains}/cert.pem") as f:
         cert = f.read()
-    with open(f"/tmp/certbot/live/{config.domains}/privkey.pem") as f:
+    with open(f"{CERTBOT_DIR}/live/{domains}/privkey.pem") as f:
         privkey = f.read()
-    with open(f"/tmp/certbot/live/{config.domains}/chain.pem") as f:
+    with open(f"{CERTBOT_DIR}/live/{domains}/chain.pem") as f:
         chain = f.read()
 
     secret_data = {
@@ -91,16 +75,32 @@ def upload_certs():
     }
     client = boto3.client('secretsmanager')
     secret_value = json.dumps(secret_data)
-    client.update_secret(SecretId=config.secret_arn, KmsKeyId=config.kms_key_arn, SecretString=secret_value)
+    client.update_secret(SecretId=secret_arn, KmsKeyId=kms_key_arn, SecretString=secret_value)
+
+
+def upload_into_efs():
+    destination_dir = '/mnt/efs/certbot'
+    shutil.copytree(CERTBOT_DIR, destination_dir)
+    print(os.listdir('/mnt/efs'))
+    print(os.listdir(destination_dir))
+
+
+def guarded_handler(event, context):
+    # Input parameters from environment variables
+    domains = os.getenv('DOMAINS')
+    secret_arn = os.getenv('SECRET_ARN')
+    kms_key_arn = os.getenv('KMS_KEY_ARN')
+
+    obtain_certs(domains)
+    upload_certs(secret_arn, kms_key_arn, domains)
+    upload_into_efs()
+
+    return 'Certificates obtained and uploaded successfully.'
 
 
 def lambda_handler(event, context):
     try:
         rm_tmp_dir()
-        package()
-        #import certbot.main
-        #obtain_certs()
-        #upload_certs()
+        return guarded_handler(event, context)
     finally:
         rm_tmp_dir()
-        print('end')

@@ -39,3 +39,7 @@ variable "vpc_cidr_block" {
 variable "availability_zones" {
   type = list(string)
 }
+
+variable "root_domain" {
+  type = string
+}
