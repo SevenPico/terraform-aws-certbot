@@ -35,11 +35,12 @@ module "ssl_certificate_context" {
 # ------------------------------------------------------------------------------
 module "ssl_certificate" {
   source  = "registry.terraform.io/SevenPico/ssl-certificate/aws"
-  version = "8.0.7"
+  version = "8.0.9"
   context = module.ssl_certificate_context.self
 
+  save_csr                            = var.save_csr
   additional_dns_names                = []
-  additional_secrets                  = {}
+  additional_secrets                  = { EXAMPLE = "example value" }
   create_mode                         = "From_File"
   create_secret_update_sns            = true
   import_filepath_certificate         = "${path.module}/cert-values/cert.pem"
@@ -49,12 +50,24 @@ module "ssl_certificate" {
   import_secret_arn                   = null
   keyname_certificate                 = "CERTIFICATE"
   keyname_certificate_chain           = "CERTIFICATE_CHAIN"
-  keyname_private_key                 = "CERTIFICATE_PRIVATE_KEY"
   keyname_certificate_signing_request = "CERTIFICATE_SIGNING_REQUEST"
-  kms_key_deletion_window_in_days     = 10
+  keyname_private_key                 = "CERTIFICATE_PRIVATE_KEY"
+  kms_key_deletion_window_in_days     = 7
   kms_key_enable_key_rotation         = false
   secret_read_principals              = {}
-  secret_update_sns_pub_principals    = {}
-  secret_update_sns_sub_principals    = {}
+  secret_update_sns_pub_principals    = {
+    RootAccess = {
+      type        = "AWS"
+      identifiers = [try(data.aws_caller_identity.current[0].account_id, "")]
+      condition   = null
+    }
+  }
+  secret_update_sns_sub_principals    = {
+    RootAccess = {
+      type        = "AWS"
+      identifiers = [try(data.aws_caller_identity.current[0].account_id, "")]
+      condition   = null
+    }
+  }
   zone_id                             = null
 }
