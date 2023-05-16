@@ -55,9 +55,9 @@ data "aws_iam_policy_document" "openvpn_ec2_policy_doc" {
 # OpenVPN
 #------------------------------------------------------------------------------
 module "openvpn" {
-  source  = "git::https://github.com/SevenPico/terraform-aws-openvpn.git?ref=hotfix/5.0.10_ssm_documents"
+  source  = "registry.terraform.io/SevenPico/openvpn/aws"
+  version = "5.0.11"
   context = module.ssl_updater_context.self
-
 
   # REQUIRED
   openvpn_dhcp_option_domain = module.context.domain_name
@@ -77,7 +77,7 @@ module "openvpn" {
   enable_efs                 = false
   enable_nat                 = true
   enable_custom_ssl          = true
-  enable_licensing           = false
+  enable_licensing           = true
   enable_openvpn_backups     = true
   enable_ec2_cloudwatch_logs = true
 
@@ -92,10 +92,12 @@ module "openvpn" {
   ssl_secret_certificate_bundle_keyname      = "CERTIFICATE_CHAIN"
   ssl_secret_certificate_keyname             = "CERTIFICATE"
   ssl_secret_certificate_private_key_keyname = "CERTIFICATE_PRIVATE_KEY"
+  ssl_license_key_keyname                    = "OPENVPN_LICENSE"
+
 
 
   # EC2
-  ec2_associate_public_ip_address           = false
+  ec2_associate_public_ip_address           = true
   ec2_ami_id                                = "ami-0574da719dca65348"
   ec2_autoscale_desired_count               = 1
   ec2_autoscale_instance_type               = "t3.micro"
@@ -109,21 +111,7 @@ module "openvpn" {
   ec2_role_source_policy_documents          = try(data.aws_iam_policy_document.openvpn_ec2_policy_doc[*].json, [])
   ec2_upgrade_schedule_expression           = "cron(15 13 ? * SUN *)"
   ec2_security_group_allow_all_egress       = true
-  ec2_security_group_rules = [
-    {
-      key       = "egress-to-vpc-443"
-      type      = "egress"
-      from_port = 443
-      to_port   = 443
-      protocol  = "tcp"
-      cidr_blocks = [
-      module.vpc.vpc_cidr_block]
-      ipv6_cidr_blocks         = []
-      source_security_group_id = null
-      self                     = null
-      description              = "Allow https egress to VPC."
-    },
-  ]
+  ec2_security_group_rules = []
 
   # NLB
   nlb_access_logs_prefix_override = null
@@ -151,14 +139,14 @@ module "openvpn" {
   openvpn_client_static_network           = "172.27.64.0"
   openvpn_client_static_network_mask      = "20"
   openvpn_daemon_ingress_blocks           = ["0.0.0.0/0"]
-  openvpn_daemon_tcp_port                 = 443
+  openvpn_daemon_tcp_port                 = null
   openvpn_daemon_udp_port                 = 1194
   openvpn_secret_admin_password_key       = "ADMIN_PASSWORD"
   openvpn_secret_arn                      = ""
   openvpn_secret_enable_kms_key_rotation  = false
   openvpn_secret_kms_key_arn              = null
   openvpn_time_zone                       = "America/Chicago"
-  openvpn_ui_https_port                   = 943
+  openvpn_ui_https_port                   = 443
   openvpn_ui_ingress_blocks               = ["0.0.0.0/0"]
   openvpn_web_server_name                 = "OpenVPN Server"
   openvpn_tls_version_min                 = "1.2"

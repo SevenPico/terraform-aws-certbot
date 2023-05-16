@@ -40,18 +40,18 @@ module "ssl-update" {
   context = module.ssl_updater_context.self
   depends_on = [module.certbot]
 
-  sns_topic_arn                       = module.ssl_certificate.sns_topic_arn
-  acm_certificate_arn                 = module.ssl_certificate.acm_certificate_arn
-  cloudwatch_log_retention_days       = 30
-  ecs_cluster_arn                     = ""
-  ecs_service_arns                    = []
-  keyname_certificate                 = "CERTIFICATE"
-  keyname_certificate_chain           = "CERTIFICATE_CHAIN"
-  keyname_private_key                 = "CERTIFICATE_PRIVATE_KEY"
-  kms_key_arn                         = module.ssl_certificate.kms_key_arn
-  secret_arn                          = module.ssl_certificate.secret_arn
-  ssm_adhoc_command                   = ""
-  ssm_named_document                  = module.openvpn.ssm_document_ssl_policy
-  ssm_target_key                      = "NAME"
-  ssm_target_values                   = [module.openvpn_context.name]
+  sns_topic_arn                 = module.ssl_certificate.sns_topic_arn
+  acm_certificate_arn           = ""
+  cloudwatch_log_retention_days = 30
+  ecs_cluster_arn               = ""
+  ecs_service_arns              = []
+  keyname_certificate           = "CERTIFICATE"
+  keyname_certificate_chain     = "CERTIFICATE_CHAIN"
+  keyname_private_key           = "CERTIFICATE_PRIVATE_KEY"
+  kms_key_arn                   = module.ssl_certificate.kms_key_arn
+  secret_arn                    = module.ssl_certificate.secret_arn
+  ssm_adhoc_command             = ""
+  ssm_named_document            = module.openvpn.ssm_document_ssl_configure
+  ssm_target_key                = "tag:Name"
+  ssm_target_values             = [module.openvpn_context.id]
 }
