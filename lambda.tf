@@ -73,22 +73,22 @@ module "lambda" {
   timeout                             = 300
   tracing_config_mode                 = null
   vpc_config = {
-    security_group_ids = [module.security-group.id]
+    security_group_ids = [aws_security_group.default.id]
     subnet_ids         = var.vpc_private_subnet_ids
   }
 }
 
-module "security-group" {
-  source  = "SevenPicoForks/security-group/aws"
-  version = "3.0.0"
-  context = module.context.self
-  count   = module.context.enabled ? 1 : 0
-
-  vpc_id                     = var.vpc_id
-  allow_all_egress           = true
-  create_before_destroy      = true
-  inline_rules_enabled       = false
-  preserve_security_group_id = false
+resource "aws_security_group" "default" {
+  name        = "${module.context.id}-lambda-security-group"
+  description = "Security group for lambda."
+  vpc_id      = var.vpc_id
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
 }
 
 
