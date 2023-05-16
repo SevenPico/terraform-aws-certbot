@@ -19,14 +19,17 @@
 ##  This file contains code written only by SevenPico, Inc.
 ## ----------------------------------------------------------------------------
 variable "target_secret_arn" {
+  description = "Secret arn of the SSL module."
   type = string
 }
 
 variable "target_secret_kms_key_arn" {
+  description = "Secret kms key arn of the SSL module."
   type = string
 }
 
 variable "cron_expression" {
+  description = "Cron expression for the cloudwatch event rule to run lambda."
   type = string
   default = "0 18 L * ? *"
 }

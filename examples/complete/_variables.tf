@@ -18,21 +18,6 @@
 ##  ./_variables.tf
 ##  This file contains code written only by SevenPico, Inc.
 ## ----------------------------------------------------------------------------
-variable "kms_key_deletion_window_in_days" {
-  type    = number
-  default = 30
-}
-
-variable "kms_key_enable_key_rotation" {
-  type    = bool
-  default = true
-}
-
-variable "secrets_map" {
-  type    = map(string)
-  default = {}
-}
-
 variable "vpc_cidr_block" {
   type = string
 }

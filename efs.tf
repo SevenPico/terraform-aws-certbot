@@ -25,7 +25,7 @@ module "efs" {
   access_points                        = {}
   additional_security_group_rules      = []
   allowed_cidr_blocks                  = []
-  allowed_security_group_ids           = []   #FIXME need to check
+  allowed_security_group_ids           = []
   associated_security_group_ids        = []
   availability_zone_name               = null
   create_security_group                = true

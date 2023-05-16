@@ -12,6 +12,11 @@ CERTBOT_SERVER = 'https://acme-v02.api.letsencrypt.org/directory'
 # Temp dir of Lambda runtime
 CERTBOT_DIR = '/tmp/certbot'
 
+cert = "CERTIFICATE"
+privkey = "CERTIFICATE_PRIVATE_KEY"
+chain = "CERTIFICATE_CHAIN"
+csr = "CERTIFICATE_SIGNING_REQUEST"
+
 
 def rm_tmp_dir():
     if os.path.exists(CERTBOT_DIR):
@@ -62,16 +67,19 @@ def obtain_certs(domains):
 # │       └── privkey.pem
 def upload_certs(secret_arn, kms_key_arn, domains):
     with open(f"{CERTBOT_DIR}/live/{domains}/cert.pem") as f:
-        cert = f.read()
+        cert_value = f.read()
     with open(f"{CERTBOT_DIR}/live/{domains}/privkey.pem") as f:
-        privkey = f.read()
+        privkey_value = f.read()
     with open(f"{CERTBOT_DIR}/live/{domains}/chain.pem") as f:
-        chain = f.read()
+        chain_value = f.read()
+    with open(f"{CERTBOT_DIR}/csr/0000_csr-certbot.pem") as f:
+        csr_value = f.read()
 
     secret_data = {
-        "CERTIFICATE": cert,
-        "CERTIFICATE_PRIVATE_KEY": privkey,
-        "CERTIFICATE_CHAIN": chain,
+        cert: cert_value,
+        privkey: privkey_value,
+        chain: chain_value,
+        csr: csr_value
     }
     client = boto3.client('secretsmanager')
     secret_value = json.dumps(secret_data)

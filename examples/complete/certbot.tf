@@ -9,15 +9,16 @@ module "certbot_context" {
 }
 
 
-
 #------------------------------------------------------------------------------
 # Certbot
 #------------------------------------------------------------------------------
 module "certbot" {
-  source                    = "../../"
-  context                   = module.certbot_context.self
-  target_secret_kms_key_arn = module.secret.kms_key_arn
-  target_secret_arn         = module.secret.arn
+  source     = "../../"
+  context    = module.certbot_context.self
+  depends_on = [module.ssl_certificate]
+
+  target_secret_kms_key_arn = module.ssl_certificate.kms_key_arn
+  target_secret_arn         = module.ssl_certificate.secret_arn
   vpc_id                    = module.vpc.vpc_id
   vpc_private_subnet_ids    = module.vpc_subnets.private_subnet_ids
 }

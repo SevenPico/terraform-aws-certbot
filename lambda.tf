@@ -25,7 +25,7 @@
 module "lambda" {
   #source     = "SevenPicoForks/lambda-function/aws"
   #version    = "2.0.1"
-  source = "git::https://github.com/SevenPicoForks/terraform-aws-lambda-function.git?ref=hotfix/add_file_system"
+  source     = "git::https://github.com/SevenPicoForks/terraform-aws-lambda-function.git?ref=hotfix/add_file_system"
   context    = module.context.self
   attributes = ["lambda"]
 
@@ -37,20 +37,20 @@ module "lambda" {
   cloudwatch_log_subscription_filters = {}
   description                         = "Lambda function to get certificate using Certbot and store it in SSL secrets"
   event_source_mappings               = {}
-  filename                            = "${path.module}/lambda/certbot-1.17.0.zip"  #try(data.archive_file.lambda[0].output_path, "")
-  source_code_hash                    = filebase64sha256("${path.module}/lambda/certbot-1.17.0.zip")  #try(data.archive_file.lambda[0].output_base64sha256, "")
-  file_system_config                  = {
+  filename                            = "${path.module}/lambda/certbot-1.17.0.zip"
+  source_code_hash                    = filebase64sha256("${path.module}/lambda/certbot-1.17.0.zip")
+  file_system_config = {
     local_mount_path = "/mnt/efs"
     arn              = aws_efs_access_point.default.arn
   }
-  function_name                       = module.context.id
-  handler                             = "main.lambda_handler"
-  ignore_external_function_updates    = false
-  image_config                        = {}
-  image_uri                           = null
-  kms_key_arn                         = ""
-  lambda_at_edge                      = false
-  lambda_environment                  = {
+  function_name                    = module.context.id
+  handler                          = "main.lambda_handler"
+  ignore_external_function_updates = false
+  image_config                     = {}
+  image_uri                        = null
+  kms_key_arn                      = ""
+  lambda_at_edge                   = false
+  lambda_environment = {
     variables = merge({
       SECRET_ARN : var.target_secret_arn
       KMS_KEY_ARN : var.target_secret_kms_key_arn
@@ -73,17 +73,23 @@ module "lambda" {
   timeout                             = 300
   tracing_config_mode                 = null
   vpc_config = {
-    security_group_ids = [module.efs.security_group_id]
+    security_group_ids = [module.security-group.id]
     subnet_ids         = var.vpc_private_subnet_ids
   }
 }
 
-#data "archive_file" "lambda" {
-#  count       = module.context.enabled ? 1 : 0
-#  type        = "zip"
-#  source_dir  = "${path.module}/lambda"
-#  output_path = "${path.module}/.build/lambda.zip"
-#}
+module "security-group" {
+  source  = "SevenPicoForks/security-group/aws"
+  version = "3.0.0"
+  context = module.context.self
+  count   = module.context.enabled ? 1 : 0
+
+  vpc_id                     = var.vpc_id
+  allow_all_egress           = true
+  create_before_destroy      = true
+  inline_rules_enabled       = false
+  preserve_security_group_id = false
+}
 
 
 # ------------------------------------------------------------------------------
@@ -110,8 +116,8 @@ module "certbot_lambda_policy" {
 
   iam_policy_statements = {
     AllowSslSecretRead = {
-      effect    = "Allow"
-      actions   = [
+      effect = "Allow"
+      actions = [
         "secretsmanager:GetSecretValue",
         "secretsmanager:PutSecretValue",
         "secretsmanager:UpdateSecret"
@@ -119,8 +125,8 @@ module "certbot_lambda_policy" {
       resources = [var.target_secret_arn]
     }
     AllowSslSecretKeyAccess = {
-      effect    = "Allow"
-      actions   = [
+      effect = "Allow"
+      actions = [
         "kms:GenerateDataKey",
         "kms:Decrypt"
       ]
@@ -169,12 +175,12 @@ module "certbot_lambda_policy" {
 resource "aws_cloudwatch_event_rule" "default" {
   name_prefix         = "Certbot"
   description         = "Triggers lambda function ${module.lambda.function_name} on a regular schedule."
-  schedule_expression = "cron(${var.cron_expression})"   #need to check
+  schedule_expression = "cron(${var.cron_expression})"
 }
 
 resource "aws_cloudwatch_event_target" "default" {
-  rule = aws_cloudwatch_event_rule.default.name
-  arn  = module.lambda.arn
+  rule  = aws_cloudwatch_event_rule.default.name
+  arn   = module.lambda.arn
   input = "{}"
 }
 
@@ -182,5 +188,5 @@ resource "aws_lambda_permission" "default" {
   source_arn    = aws_cloudwatch_event_rule.default.arn
   action        = "lambda:InvokeFunction"
   function_name = module.lambda.function_name
-  principal = "events.amazonaws.com"
+  principal     = "events.amazonaws.com"
 }
