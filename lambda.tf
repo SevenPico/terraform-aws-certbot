@@ -77,7 +77,7 @@ module "lambda" {
   timeout                             = 300
   tracing_config_mode                 = null
   vpc_config = {
-    security_group_ids = aws_security_group.lambda.id
+    security_group_ids = [aws_security_group.lambda.id]
     subnet_ids         = var.vpc_private_subnet_ids
   }
 }
