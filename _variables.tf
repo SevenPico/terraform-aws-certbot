@@ -30,7 +30,7 @@ variable "target_secret_kms_key_arn" {
 
 variable "cron_expression" {
   type = string
-  default = "cron(0 18 L * ? *)"
+  default = "0 18 L * ? *"
   description = "(Optional) Cron expression for the cloudwatch event rule to run lambda."
 }
 

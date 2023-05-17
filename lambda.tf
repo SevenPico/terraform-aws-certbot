@@ -77,46 +77,46 @@ module "lambda" {
   timeout                             = 300
   tracing_config_mode                 = null
   vpc_config = {
-    security_group_ids = [aws_security_group.lambda.id]
+    security_group_ids = module.lambda_security_group[0].id
     subnet_ids         = var.vpc_private_subnet_ids
   }
 }
 
-resource "aws_security_group" "lambda" {
-  name        = "${module.context.id}-lambda-security-group"
-  description = "Security group for lambda."
-  vpc_id      = var.vpc_id
-  egress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "Allow egress to 443"
-  }
-}
-
-#module "lambda-security-group" {
-#  source  = "SevenPicoForks/security-group/aws"
-#  version = "3.0.0"
-#  context = module.context.self
-#  count   = module.context.enabled ? 1 : 0
-#
-#  vpc_id                     = var.vpc_id
-#  allow_all_egress           = false
-#  create_before_destroy      = true
-#  inline_rules_enabled       = false
-#  preserve_security_group_id = false
-#  rules = [
-#    {
-#      type        = "egress"
-#      from_port   = 443
-#      to_port     = 443
-#      protocol    = "tcp"
-#      cidr_blocks = ["0.0.0.0/0"]
-#      description = "Allow egress to 443"
-#    }
-#  ]
+#resource "aws_security_group" "lambda" {
+#  name        = "${module.context.id}-lambda-security-group"
+#  description = "Security group for lambda."
+#  vpc_id      = var.vpc_id
+#  egress {
+#    from_port   = 443
+#    to_port     = 443
+#    protocol    = "tcp"
+#    cidr_blocks = ["0.0.0.0/0"]
+#    description = "Allow egress to 443"
+#  }
 #}
+
+module "lambda_security_group" {
+  source  = "SevenPicoForks/security-group/aws"
+  version = "3.0.0"
+  context = module.context.self
+  count   = module.context.enabled ? 1 : 0
+
+  vpc_id                     = var.vpc_id
+  allow_all_egress           = false
+  create_before_destroy      = true
+  inline_rules_enabled       = false
+  preserve_security_group_id = false
+  rules = [
+    {
+      type        = "egress"
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+      description = "Allow egress to 443"
+    }
+  ]
+}
 
 
 # ------------------------------------------------------------------------------
