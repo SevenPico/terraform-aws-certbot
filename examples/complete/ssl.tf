@@ -34,11 +34,11 @@ module "ssl_certificate_context" {
 # SSL Certificate
 # ------------------------------------------------------------------------------
 module "ssl_certificate" {
-  #source  = "registry.terraform.io/SevenPico/ssl-certificate/aws"
-  #version = "8.0.9"
-  source     = "git::https://github.com/SevenPico/terraform-aws-ssl-certificate.git?ref=hotfix/certbot"
+  source  = "registry.terraform.io/SevenPico/ssl-certificate/aws"
+  version = "8.0.9"
   context = module.ssl_certificate_context.self
 
+  save_csr                            = true
   additional_dns_names                = []
   additional_secrets                  = { EXAMPLE = "example value" }
   create_mode                         = "LetsEncrypt"
