@@ -116,10 +116,10 @@ module "openvpn" {
   # NLB
   nlb_access_logs_prefix_override = null
   nlb_access_logs_s3_bucket_id    = null
-  nlb_acm_certificate_arn         = module.ssl_certificate.acm_certificate_arn
+  nlb_acm_certificate_arn         = null #module.ssl_certificate.acm_certificate_arn
   nlb_deletion_protection_enabled = false
-  nlb_subnet_ids                  = module.vpc_subnets.public_subnet_ids
-  nlb_tls_ssl_policy              = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+  nlb_subnet_ids                  = null #module.vpc_subnets.public_subnet_ids
+  nlb_tls_ssl_policy              = null #"ELBSecurityPolicy-TLS13-1-2-2021-06"
 
   # S3
   s3_source_policy_documents       = []
