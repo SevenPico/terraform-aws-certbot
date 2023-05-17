@@ -28,8 +28,3 @@ variable "availability_zones" {
 variable "root_domain" {
   type = string
 }
-
-variable "save_csr" {
-  type        = bool
-  default     = true
-}

@@ -19,25 +19,19 @@
 ##  This file contains code written only by SevenPico, Inc.
 ## ----------------------------------------------------------------------------
 variable "target_secret_arn" {
-  description = "Secret arn of the SSL module."
   type = string
+  description = "Secret arn of the SSL module."
 }
 
 variable "target_secret_kms_key_arn" {
-  description = "Secret kms key arn of the SSL module."
+  description = "(Required) The KMS key arn of the key used to decrypt Secrets Manager document where the Certbot values will be stored."
   type = string
 }
 
 variable "cron_expression" {
-  description = "Cron expression for the cloudwatch event rule to run lambda."
   type = string
-  default = "0 18 L * ? *"
-}
-
-variable "dns_plugin" {
-  description = "The dns plugin for certbot."
-  type        = string
-  default     = "dns-route53"
+  default = "cron(0 18 L * ? *)"
+  description = "(Optional) Cron expression for the cloudwatch event rule to run lambda."
 }
 
 variable "certbot_version" {
@@ -51,5 +45,25 @@ variable "vpc_id" {
 
 variable "vpc_private_subnet_ids" {
   type = list(string)
+}
+
+variable "keyname_certificate" {
+  type        = string
+  default     = ""
+}
+
+variable "keyname_private_key" {
+  type        = string
+  default     = ""
+}
+
+variable "keyname_certificate_chain" {
+  type        = string
+  default     = ""
+}
+
+variable "keyname_certificate_signing_request" {
+  type        = string
+  default     = ""
 }
 

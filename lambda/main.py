@@ -12,10 +12,10 @@ CERTBOT_SERVER = 'https://acme-v02.api.letsencrypt.org/directory'
 # Temp dir of Lambda runtime
 CERTBOT_DIR = '/tmp/certbot'
 
-cert = "CERTIFICATE"
-privkey = "CERTIFICATE_PRIVATE_KEY"
-chain = "CERTIFICATE_CHAIN"
-csr = "CERTIFICATE_SIGNING_REQUEST"
+cert = os.getenv('KEYNAME_CERTIFICATE')
+privkey = os.getenv('KEYNAME_PRIVATE_KEY')
+chain = os.getenv('KEYNAME_CERTIFICATE_CHAIN')
+csr = os.getenv('KEYNAME_CERTIFICATE_SIGNING_REQUEST')
 
 
 def rm_tmp_dir():

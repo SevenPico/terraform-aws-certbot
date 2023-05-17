@@ -34,14 +34,14 @@ module "ssl_certificate_context" {
 # SSL Certificate
 # ------------------------------------------------------------------------------
 module "ssl_certificate" {
-  source  = "registry.terraform.io/SevenPico/ssl-certificate/aws"
-  version = "8.0.9"
+  #source  = "registry.terraform.io/SevenPico/ssl-certificate/aws"
+  #version = "8.0.9"
+  source = "ssl-certificate"
   context = module.ssl_certificate_context.self
 
-  save_csr                            = var.save_csr
   additional_dns_names                = []
   additional_secrets                  = { EXAMPLE = "example value" }
-  create_mode                         = "From_File"
+  create_mode                         = "Create_Secret_Only"
   create_secret_update_sns            = true
   import_filepath_certificate         = "${path.module}/cert-values/cert.pem"
   import_filepath_certificate_chain   = "${path.module}/cert-values/chain.pem"

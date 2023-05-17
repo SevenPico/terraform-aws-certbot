@@ -49,12 +49,13 @@ module "efs" {
 }
 
 resource "aws_security_group_rule" "default" {
-  type              = "ingress"
-  from_port         = 2049
-  to_port           = 2049
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = module.efs.security_group_id
+  type      = "ingress"
+  from_port = 2049
+  to_port   = 2049
+  protocol  = "tcp"
+  #cidr_blocks       = ["0.0.0.0/0"]
+  source_security_group_id = aws_security_group.lambda.id
+  security_group_id        = module.efs.security_group_id
 }
 
 resource "aws_efs_access_point" "default" {
