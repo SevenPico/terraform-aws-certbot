@@ -70,7 +70,7 @@ module "openvpn" {
 
   # Create Options
   create_ec2_autoscale_sns_topic = true
-  create_nlb                     = false  #true
+  create_nlb                     = true
   create_openvpn_secret          = true
 
   # Enablements

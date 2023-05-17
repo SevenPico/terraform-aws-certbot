@@ -19,51 +19,57 @@
 ##  This file contains code written only by SevenPico, Inc.
 ## ----------------------------------------------------------------------------
 variable "target_secret_arn" {
-  type = string
-  description = "Secret arn of the SSL module."
+  description = "(Required) The arn of the secret where the Certbot values will be stored."
+  type        = string
+  default     = ""
 }
 
 variable "target_secret_kms_key_arn" {
   description = "(Required) The KMS key arn of the key used to decrypt Secrets Manager document where the Certbot values will be stored."
-  type = string
+  type        = string
+  default     = ""
 }
 
 variable "cron_expression" {
-  type = string
-  default = "0 18 L * ? *"
   description = "(Optional) Cron expression for the cloudwatch event rule to run lambda."
-}
+  type        = string
+  default     = "0 18 L * ? *"
 
-variable "certbot_version" {
-  type = string
-  default = "1.17.0"
 }
 
 variable "vpc_id" {
-  type = string
+  description = "(Required) The ID of the VPC where the Security Group will be created."
+  type        = string
+  default     = ""
 }
 
 variable "vpc_private_subnet_ids" {
-  type = list(string)
+  description = "(Required) A list of subnet IDs to associate with Lambda and EFS"
+  type        = list(string)
+  default     = []
 }
 
-variable "keyname_certificate" {
+variable "ssl_secret_keyname_certificate" {
+  description = "(Required) Keyname certificate of the SSL secrets used to store in Certbot lambda."
   type        = string
-  default     = ""
+  default     = "CERTIFICATE"
 }
 
-variable "keyname_private_key" {
+variable "ssl_secret_keyname_private_key" {
+  description = "(Required) Keyname private key of the SSL secrets used to store in Certbot lambda."
   type        = string
-  default     = ""
+  default     = "CERTIFICATE_PRIVATE_KEY"
 }
 
-variable "keyname_certificate_chain" {
+variable "ssl_secret_keyname_certificate_chain" {
+  description = "(Required) Keyname certificate chain of the SSL secrets used to store in Certbot lambda."
   type        = string
-  default     = ""
+  default     = "CERTIFICATE_CHAIN"
 }
 
-variable "keyname_certificate_signing_request" {
+variable "ssl_secret_keyname_certificate_signing_request" {
+  description = "(Required) Keyname certificate signing request of the SSL secrets used to store in Certbot lambda."
   type        = string
-  default     = ""
+  default     = "CERTIFICATE_SIGNING_REQUEST"
 }
 

@@ -41,7 +41,7 @@ module "ssl_certificate" {
 
   additional_dns_names                = []
   additional_secrets                  = { EXAMPLE = "example value" }
-  create_mode                         = "From_Certbot"
+  create_mode                         = "LetsEncrypt"
   create_secret_update_sns            = true
   import_filepath_certificate         = null
   import_filepath_certificate_chain   = null
