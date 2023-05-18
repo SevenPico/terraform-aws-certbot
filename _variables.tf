@@ -50,26 +50,31 @@ variable "vpc_private_subnet_ids" {
 }
 
 variable "ssl_secret_keyname_certificate" {
-  description = "(Required) Keyname certificate of the SSL secrets used to store in Certbot lambda."
+  description = "(Optional) Keyname certificate of the SSL secrets used to store in Certbot lambda."
   type        = string
   default     = "CERTIFICATE"
 }
 
 variable "ssl_secret_keyname_private_key" {
-  description = "(Required) Keyname private key of the SSL secrets used to store in Certbot lambda."
+  description = "(Optional) Keyname private key of the SSL secrets used to store in Certbot lambda."
   type        = string
   default     = "CERTIFICATE_PRIVATE_KEY"
 }
 
 variable "ssl_secret_keyname_certificate_chain" {
-  description = "(Required) Keyname certificate chain of the SSL secrets used to store in Certbot lambda."
+  description = "(Optional) Keyname certificate chain of the SSL secrets used to store in Certbot lambda."
   type        = string
   default     = "CERTIFICATE_CHAIN"
 }
 
 variable "ssl_secret_keyname_certificate_signing_request" {
-  description = "(Required) Keyname certificate signing request of the SSL secrets used to store in Certbot lambda."
+  description = "(Optional) Keyname certificate signing request of the SSL secrets used to store in Certbot lambda."
   type        = string
   default     = "CERTIFICATE_SIGNING_REQUEST"
 }
 
+variable "create_wildcard" {
+  description = "(Optional) Create domain name with wildcard."
+  type        = bool
+  default     = true
+}

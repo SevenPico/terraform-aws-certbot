@@ -54,7 +54,8 @@ module "lambda" {
     variables = merge({
       SECRET_ARN : var.target_secret_arn
       KMS_KEY_ARN : var.target_secret_kms_key_arn
-      DOMAINS : module.context.domain_name
+      DOMAINS : var.create_wildcard ? "*.${module.context.domain_name}" : module.context.domain_name
+      DOMAIN_FOR_DIRECTORY : module.context.domain_name
       KEYNAME_CERTIFICATE : var.ssl_secret_keyname_certificate
       KEYNAME_PRIVATE_KEY : var.ssl_secret_keyname_private_key
       KEYNAME_CERTIFICATE_CHAIN : var.ssl_secret_keyname_certificate_chain

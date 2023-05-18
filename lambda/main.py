@@ -65,12 +65,12 @@ def obtain_certs(domains):
 # │       ├── chain.pem
 # │       ├── fullchain.pem
 # │       └── privkey.pem
-def upload_certs(secret_arn, kms_key_arn, domains):
-    with open(f"{CERTBOT_DIR}/live/{domains}/cert.pem") as f:
+def upload_certs(secret_arn, kms_key_arn, domain_for_directory):
+    with open(f"{CERTBOT_DIR}/live/{domain_for_directory}/cert.pem") as f:
         cert_value = f.read()
-    with open(f"{CERTBOT_DIR}/live/{domains}/privkey.pem") as f:
+    with open(f"{CERTBOT_DIR}/live/{domain_for_directory}/privkey.pem") as f:
         privkey_value = f.read()
-    with open(f"{CERTBOT_DIR}/live/{domains}/chain.pem") as f:
+    with open(f"{CERTBOT_DIR}/live/{domain_for_directory}/chain.pem") as f:
         chain_value = f.read()
     with open(f"{CERTBOT_DIR}/csr/0000_csr-certbot.pem") as f:
         csr_value = f.read()
@@ -100,11 +100,12 @@ def upload_into_efs():
 def guarded_handler(event, context):
     # Input parameters from environment variables
     domains = os.getenv('DOMAINS')
+    domain_for_directory = os.getenv('DOMAIN_FOR_DIRECTORY')
     secret_arn = os.getenv('SECRET_ARN')
     kms_key_arn = os.getenv('KMS_KEY_ARN')
 
     obtain_certs(domains)
-    upload_certs(secret_arn, kms_key_arn, domains)
+    upload_certs(secret_arn, kms_key_arn, domain_for_directory)
     upload_into_efs()
 
     return 'Certificates obtained and uploaded successfully.'
