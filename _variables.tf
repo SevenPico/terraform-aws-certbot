@@ -78,3 +78,9 @@ variable "create_wildcard" {
   type        = bool
   default     = true
 }
+
+variable "acm_certificate_arn" {
+  description = "(Optional) ACM certificate arn for the cloudwatch alarm."
+  type        = string
+  default     = ""
+}

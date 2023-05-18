@@ -94,25 +94,6 @@ module "lambda_security_group" {
   create_before_destroy      = true
   inline_rules_enabled       = false
   preserve_security_group_id = false
-#  rules = [
-#    {
-#      type        = "egress"
-#      from_port   = 443
-#      to_port     = 443
-#      protocol    = "tcp"
-#      cidr_blocks = ["0.0.0.0/0"]
-#      description = "Allow egress to 443"
-#    },
-#    {
-#      type        = "egress"
-#      from_port   = 2049
-#      to_port     = 2049
-#      protocol    = "tcp"
-#      #cidr_blocks = ["0.0.0.0/0"]
-#      source_security_group_id = module.efs.security_group_id
-#      description = "Allow egress to EFS"
-#    }
-#  ]
   rules_map = merge({ egress-to-443 = [
     {
       type                     = "egress"
@@ -139,79 +120,6 @@ module "lambda_security_group" {
 # ------------------------------------------------------------------------------
 # Lambda IAM
 # ------------------------------------------------------------------------------
-#resource "aws_iam_role_policy_attachment" "lambda" {
-#  count      = module.context.enabled ? 1 : 0
-#  role       = module.lambda.role_arn #"${module.context.id}-lambda-role"
-#  policy_arn = module.certbot_lambda_policy.policy_arn
-#}
-#
-#module "certbot_lambda_policy" {
-#  source     = "SevenPicoForks/iam-policy/aws"
-#  version    = "2.0.0"
-#  context    = module.context.self
-#  attributes = ["lambda", "policy"]
-#
-#  description                   = "Lambda Access Policy"
-#  iam_override_policy_documents = null
-#  iam_policy_enabled            = true
-#  iam_policy_id                 = null
-#  iam_source_json_url           = null
-#  iam_source_policy_documents   = null
-#
-#  iam_policy_statements = {
-#    AllowSslSecretRead = {
-#      effect = "Allow"
-#      actions = [
-#        "secretsmanager:GetSecretValue",
-#        "secretsmanager:PutSecretValue",
-#        "secretsmanager:UpdateSecret"
-#      ]
-#      resources = [var.target_secret_arn]
-#    }
-#    AllowSslSecretKeyAccess = {
-#      effect = "Allow"
-#      actions = [
-#        "kms:GenerateDataKey",
-#        "kms:Decrypt"
-#      ]
-#      resources = [var.target_secret_kms_key_arn]
-#    }
-#    AllowRoute53Access = {
-#      effect = "Allow"
-#      actions = [
-#        "route53:ListHostedZones",
-#        "route53:GetChange",
-#        "route53:ChangeResourceRecordSets"
-#      ]
-#      resources = ["*"]
-#    }
-#    AllowVpcAccess = {
-#      effect = "Allow"
-#      actions = [
-#        "logs:CreateLogGroup",
-#        "logs:CreateLogStream",
-#        "logs:PutLogEvents",
-#        "ec2:CreateNetworkInterface",
-#        "ec2:DescribeNetworkInterfaces",
-#        "ec2:DeleteNetworkInterface",
-#        "ec2:AssignPrivateIpAddresses",
-#        "ec2:UnassignPrivateIpAddresses"
-#      ]
-#      resources = ["*"]
-#    }
-#    AllowEfsAccess = {
-#      effect = "Allow"
-#      actions = [
-#        "elasticfilesystem:ClientMount",
-#        "elasticfilesystem:ClientRootAccess",
-#        "elasticfilesystem:ClientWrite",
-#        "elasticfilesystem:DescribeMountTargets"
-#      ]
-#      resources = ["*"]
-#    }
-#  }
-#}
-
 data "aws_iam_policy_document" "default" {
   statement {
     sid = "AllowSslSecretRead"
@@ -289,4 +197,25 @@ resource "aws_lambda_permission" "default" {
   action        = "lambda:InvokeFunction"
   function_name = module.lambda.function_name
   principal     = "events.amazonaws.com"
+}
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Cloudwatch Alarm
+# ---------------------------------------------------------------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "certificate-expiration-alarm" {
+  alarm_name          = "certificate-expiration"
+  comparison_operator = "LessThanOrEqualToThreshold"
+  period              = "86400"
+  evaluation_periods  = "1"
+  threshold           = "150"
+  namespace           = "AWS/CertificateManager"
+  metric_name         = "DaysToExpiry"
+  statistic           = "Average"
+  alarm_description   = "This metric monitors certificate expiration"
+  actions_enabled     = "true"
+  #alarm_actions       = [aws_sns_topic.certificate-alarm.arn]
+  dimensions = {
+    CertificateArn = var.acm_certificate_arn
+  }
 }
