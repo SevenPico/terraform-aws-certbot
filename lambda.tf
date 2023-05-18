@@ -270,8 +270,8 @@ data "aws_iam_policy_document" "default" {
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_cloudwatch_event_rule" "default" {
   name_prefix         = "Certbot"
-  description         = "Triggers lambda function ${module.lambda.function_name} on a regular schedule."
-  schedule_expression = "cron(${var.cron_expression})"
+  description         = "Triggers lambda function ${module.context.id} on a regular schedule."
+  schedule_expression = var.cron_expression
 }
 
 resource "aws_cloudwatch_event_target" "default" {
