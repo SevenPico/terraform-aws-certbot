@@ -269,19 +269,22 @@ data "aws_iam_policy_document" "default" {
 # Cloudwatch Event Rule
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_cloudwatch_event_rule" "default" {
+  count               = module.context.id ? 1 : 0
   name_prefix         = "Certbot"
-  description         = "Triggers lambda function ${module.context.id} on a regular schedule."
+  description         = "Triggers lambda function ${module.lambda.function_name} on a regular schedule."
   schedule_expression = var.cron_expression
 }
 
 resource "aws_cloudwatch_event_target" "default" {
-  rule  = aws_cloudwatch_event_rule.default.name
+  count = module.context.id ? 1 : 0
+  rule  = try(aws_cloudwatch_event_rule.default[0].name, "")
   arn   = module.lambda.arn
   input = "{}"
 }
 
 resource "aws_lambda_permission" "default" {
-  source_arn    = aws_cloudwatch_event_rule.default.arn
+  count         = module.context.id ? 1 : 0
+  source_arn    = try(aws_cloudwatch_event_rule.default[0].arn, "")
   action        = "lambda:InvokeFunction"
   function_name = module.lambda.function_name
   principal     = "events.amazonaws.com"
