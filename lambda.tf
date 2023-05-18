@@ -41,7 +41,7 @@ module "lambda" {
   source_code_hash                    = filebase64sha256("${path.module}/lambda/certbot-1.17.0.zip")
   file_system_config = {
     local_mount_path = "/mnt/efs"
-    arn              = aws_efs_access_point.default.arn
+    arn              = try(aws_efs_access_point.default[0].arn, "")
   }
   function_name                    = module.context.id
   handler                          = "main.lambda_handler"
@@ -77,7 +77,7 @@ module "lambda" {
   timeout                             = 300
   tracing_config_mode                 = null
   vpc_config = {
-    security_group_ids = [module.lambda_security_group[0].id]
+    security_group_ids = try([module.lambda_security_group[0].id], "")
     subnet_ids         = var.vpc_private_subnet_ids
   }
 }

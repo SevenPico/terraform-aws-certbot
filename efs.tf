@@ -49,15 +49,17 @@ module "efs" {
 }
 
 resource "aws_security_group_rule" "default" {
+  count                    = module.context.enabled ? 1 : 0
   type                     = "ingress"
   from_port                = 2049
   to_port                  = 2049
   protocol                 = "tcp"
-  source_security_group_id = module.lambda_security_group[0].id
+  source_security_group_id = try([module.lambda_security_group[0].id], "")
   security_group_id        = module.efs.security_group_id
 }
 
 resource "aws_efs_access_point" "default" {
+  count          = module.context.enabled ? 1 : 0
   file_system_id = module.efs.id
   root_directory {
     path = "/lambda"
