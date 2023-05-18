@@ -17,6 +17,7 @@ module "certbot" {
   context    = module.certbot_context.self
   depends_on = [module.ssl_certificate]
 
+  acm_certificate_arn                            = module.ssl_certificate.acm_certificate_arn
   ssl_secret_keyname_certificate                 = "CERTIFICATE"
   ssl_secret_keyname_certificate_chain           = "CERTIFICATE_CHAIN"
   ssl_secret_keyname_certificate_signing_request = "CERTIFICATE_SIGNING_REQUEST"
