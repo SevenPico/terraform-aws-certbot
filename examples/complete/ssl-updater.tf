@@ -41,7 +41,7 @@ module "ssl-update" {
   depends_on = [module.certbot]
 
   sns_topic_arn                 = module.ssl_certificate.sns_topic_arn
-  acm_certificate_arn           = ""
+  acm_certificate_arn           = module.ssl_certificate.acm_certificate_arn
   cloudwatch_log_retention_days = 30
   ecs_cluster_arn               = ""
   ecs_service_arns              = []
