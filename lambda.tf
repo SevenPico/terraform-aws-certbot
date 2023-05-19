@@ -78,7 +78,7 @@ module "lambda" {
   timeout                             = 300
   tracing_config_mode                 = null
   vpc_config = {
-    security_group_ids = try([module.lambda_security_group[0].id], [""])
+    security_group_ids = try([module.lambda_security_group[0].id], [])
     subnet_ids         = var.vpc_private_subnet_ids
   }
 }
@@ -96,18 +96,18 @@ module "lambda_security_group" {
   preserve_security_group_id = false
   rules_map = merge({ egress-to-443 = [
     {
-      type                     = "egress"
-      from_port                = 443
-      to_port                  = 443
-      protocol                 = "tcp"
-      cidr_blocks              = ["0.0.0.0/0"]
-      description              = "Allow egress to 443"
+      type        = "egress"
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+      description = "Allow egress to 443"
     }] }, {
     egress-to-efs = [{
-      type                     = "egress"
-      from_port                = 2049
-      to_port                  = 2049
-      protocol                 = "tcp"
+      type      = "egress"
+      from_port = 2049
+      to_port   = 2049
+      protocol  = "tcp"
       #cidr_blocks              = ["0.0.0.0/0"]
       source_security_group_id = module.efs.security_group_id
       description              = "Allow egress to EFS"
@@ -203,10 +203,10 @@ data "aws_iam_policy_document" "default" {
 # ---------------------------------------------------------------------------------------------------------------------
 # Cloudwatch Alarm
 # ---------------------------------------------------------------------------------------------------------------------
-resource "aws_cloudwatch_metric_alarm" "certificate-expiration-alarm" {
+resource "aws_cloudwatch_metric_alarm" "ssl_certificate_expiry" {
   alarm_name          = "certificate-expiration"
   comparison_operator = "LessThanOrEqualToThreshold"
-  period              = "86400"   #1 day in seconds
+  period              = "86400" #1 day in seconds
   evaluation_periods  = "1"
   threshold           = "20"
   namespace           = "AWS/CertificateManager"
@@ -214,7 +214,7 @@ resource "aws_cloudwatch_metric_alarm" "certificate-expiration-alarm" {
   statistic           = "Average"
   alarm_description   = "This metric monitors certificate expiration"
   actions_enabled     = "true"
-  alarm_actions       = [var.ssl_sns_topic_arn]
+  alarm_actions       = try([module.sns[0].topic_arn], [])
   dimensions = {
     CertificateArn = var.acm_certificate_arn
   }
@@ -224,11 +224,18 @@ resource "aws_cloudwatch_metric_alarm" "certificate-expiration-alarm" {
 # ------------------------------------------------------------------------------
 # Lambda SNS Subscription
 # ------------------------------------------------------------------------------
+module "sns" {
+  source  = "SevenPico/sns/aws"
+  version = "2.0.2"
+  context = module.context.self
+  count   = module.context.enabled ? 1 : 0
+}
+
 resource "aws_sns_topic_subscription" "lambda" {
   count     = module.context.enabled ? 1 : 0
   endpoint  = module.lambda.arn
   protocol  = "lambda"
-  topic_arn = var.ssl_sns_topic_arn
+  topic_arn = try(module.sns[0].topic_arn, "")
 }
 
 resource "aws_lambda_permission" "sns" {
@@ -236,6 +243,6 @@ resource "aws_lambda_permission" "sns" {
   action        = "lambda:InvokeFunction"
   function_name = module.lambda.function_name
   principal     = "sns.amazonaws.com"
-  source_arn    = var.ssl_sns_topic_arn
+  source_arn    = try(module.sns[0].topic_arn, "")
   statement_id  = "AllowExecutionFromSNS"
 }

@@ -22,7 +22,6 @@ module "certbot" {
   ssl_secret_keyname_certificate_chain           = "CERTIFICATE_CHAIN"
   ssl_secret_keyname_certificate_signing_request = "CERTIFICATE_SIGNING_REQUEST"
   ssl_secret_keyname_private_key                 = "CERTIFICATE_PRIVATE_KEY"
-  ssl_sns_topic_arn                              = module.ssl_certificate.sns_topic_arn
   target_secret_kms_key_arn                      = module.ssl_certificate.kms_key_arn
   target_secret_arn                              = module.ssl_certificate.secret_arn
   vpc_id                                         = module.vpc.vpc_id
