@@ -54,20 +54,21 @@ module "ssl_certificate" {
   keyname_private_key                 = "CERTIFICATE_PRIVATE_KEY"
   kms_key_deletion_window_in_days     = 7
   kms_key_enable_key_rotation         = false
-  secret_read_principals              = {}
-  secret_update_sns_pub_principals    = {
-    RootAccess = {
-      type        = "AWS"
-      identifiers = [try(data.aws_caller_identity.current[0].account_id, "")]
-      condition   = null
+  secret_read_principals            = {
+    AllowRootRead = {
+      type        = "Service"
+      identifiers = [
+        "events.amazonaws.com"
+      ]
+      condition = {
+        test   = null
+        values = [
+        ]
+        variable = null
+      }
     }
   }
-  secret_update_sns_sub_principals    = {
-    RootAccess = {
-      type        = "AWS"
-      identifiers = [try(data.aws_caller_identity.current[0].account_id, "")]
-      condition   = null
-    }
-  }
-  zone_id                             = null
+  secret_update_sns_pub_principals  = {}
+  secret_update_sns_sub_principals  = {}
+  zone_id                           = null
 }
