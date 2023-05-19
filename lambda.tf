@@ -177,27 +177,27 @@ data "aws_iam_policy_document" "default" {
 # ---------------------------------------------------------------------------------------------------------------------
 # Cloudwatch Event Rule
 # ---------------------------------------------------------------------------------------------------------------------
-resource "aws_cloudwatch_event_rule" "default" {
-  count               = module.context.enabled ? 1 : 0
-  name_prefix         = "Certbot"
-  description         = "Triggers lambda function ${module.lambda.function_name} on a regular schedule."
-  schedule_expression = var.cron_expression
-}
-
-resource "aws_cloudwatch_event_target" "default" {
-  count = module.context.enabled ? 1 : 0
-  rule  = try(aws_cloudwatch_event_rule.default[0].name, "")
-  arn   = module.lambda.arn
-  input = "{}"
-}
-
-resource "aws_lambda_permission" "default" {
-  count         = module.context.enabled ? 1 : 0
-  source_arn    = try(aws_cloudwatch_event_rule.default[0].arn, "")
-  action        = "lambda:InvokeFunction"
-  function_name = module.lambda.function_name
-  principal     = "events.amazonaws.com"
-}
+#resource "aws_cloudwatch_event_rule" "default" {
+#  count               = module.context.enabled ? 1 : 0
+#  name_prefix         = "Certbot"
+#  description         = "Triggers lambda function ${module.lambda.function_name} on a regular schedule."
+#  schedule_expression = var.cron_expression
+#}
+#
+#resource "aws_cloudwatch_event_target" "default" {
+#  count = module.context.enabled ? 1 : 0
+#  rule  = try(aws_cloudwatch_event_rule.default[0].name, "")
+#  arn   = module.lambda.arn
+#  input = "{}"
+#}
+#
+#resource "aws_lambda_permission" "default" {
+#  count         = module.context.enabled ? 1 : 0
+#  source_arn    = try(aws_cloudwatch_event_rule.default[0].arn, "")
+#  action        = "lambda:InvokeFunction"
+#  function_name = module.lambda.function_name
+#  principal     = "events.amazonaws.com"
+#}
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -206,16 +206,36 @@ resource "aws_lambda_permission" "default" {
 resource "aws_cloudwatch_metric_alarm" "certificate-expiration-alarm" {
   alarm_name          = "certificate-expiration"
   comparison_operator = "LessThanOrEqualToThreshold"
-  period              = "86400"
+  period              = "86400"   #1 day in seconds
   evaluation_periods  = "1"
-  threshold           = "150"
+  threshold           = "20"
   namespace           = "AWS/CertificateManager"
   metric_name         = "DaysToExpiry"
   statistic           = "Average"
   alarm_description   = "This metric monitors certificate expiration"
   actions_enabled     = "true"
-  #alarm_actions       = [aws_sns_topic.certificate-alarm.arn]
+  alarm_actions       = [var.ssl_sns_topic_arn]
   dimensions = {
     CertificateArn = var.acm_certificate_arn
   }
+}
+
+
+# ------------------------------------------------------------------------------
+# Lambda SNS Subscription
+# ------------------------------------------------------------------------------
+resource "aws_sns_topic_subscription" "lambda" {
+  count     = module.context.enabled ? 1 : 0
+  endpoint  = module.lambda.arn
+  protocol  = "lambda"
+  topic_arn = var.ssl_sns_topic_arn
+}
+
+resource "aws_lambda_permission" "sns" {
+  count         = module.context.enabled ? 1 : 0
+  action        = "lambda:InvokeFunction"
+  function_name = module.lambda.function_name
+  principal     = "sns.amazonaws.com"
+  source_arn    = var.ssl_sns_topic_arn
+  statement_id  = "AllowExecutionFromSNS"
 }

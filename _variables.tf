@@ -84,3 +84,9 @@ variable "acm_certificate_arn" {
   type        = string
   default     = ""
 }
+
+variable "ssl_sns_topic_arn" {
+  description = "(Required) SNS topic arn for the cloudwatch alarm actions."
+  type        = string
+  default     = ""
+}
