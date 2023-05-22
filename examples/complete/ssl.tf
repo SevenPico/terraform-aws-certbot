@@ -35,7 +35,7 @@ module "ssl_certificate_context" {
 # ------------------------------------------------------------------------------
 module "ssl_certificate" {
   source  = "registry.terraform.io/SevenPico/ssl-certificate/aws"
-  version = "8.0.9"
+  version = "8.0.10"
   context = module.ssl_certificate_context.self
 
   save_csr                            = true

@@ -212,7 +212,7 @@ resource "aws_cloudwatch_metric_alarm" "ssl_certificate_expiry" {
   threshold           = "20"
   namespace           = "AWS/CertificateManager"
   metric_name         = "DaysToExpiry"
-  statistic           = "Average"
+  statistic           = "Minimum"
   alarm_description   = "This metric monitors certificate expiration"
   actions_enabled     = "true"
   alarm_actions       = try([module.sns[0].topic_arn], [])
