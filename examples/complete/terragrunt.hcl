@@ -50,6 +50,25 @@ inputs = {
   vpc_cidr_block     = "10.10.0.0/16"
   availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c"]
 
+  cloudtrail_log_storage_lifecycle_rules = [
+    {
+      enabled                                = true # bool
+      id                                     = "temp-log-retention-policy-with-expiration"
+      abort_incomplete_multipart_upload_days = 1 # number
+      filter_and                             = null
+      expiration                             = {
+        days                         = 1 # integer > 0
+        expired_object_delete_marker = false
+
+      }
+      noncurrent_version_expiration = {
+        noncurrent_days = 1
+      }
+      transition                    = []
+      noncurrent_version_transition = []
+    }
+  ]
+
 }
 
 remote_state {

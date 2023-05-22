@@ -30,13 +30,6 @@ variable "target_secret_kms_key_arn" {
   default     = ""
 }
 
-variable "cron_expression" {
-  description = "(Optional) Cron expression for the cloudwatch event rule to run lambda."
-  type        = string
-  default     = "cron(0 18 L * ? *)"
-
-}
-
 variable "vpc_id" {
   description = "(Required) The ID of the VPC where the Security Group will be created."
   type        = string

@@ -28,3 +28,8 @@ variable "availability_zones" {
 variable "root_domain" {
   type = string
 }
+
+variable "cloudtrail_log_storage_lifecycle_rules" {
+  type    = list(any)
+  default = []
+}
