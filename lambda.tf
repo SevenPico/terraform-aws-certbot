@@ -104,11 +104,10 @@ module "lambda_security_group" {
       description = "Allow egress to 443"
     }] }, {
     egress-to-efs = [{
-      type      = "egress"
-      from_port = 2049
-      to_port   = 2049
-      protocol  = "tcp"
-      #cidr_blocks              = ["0.0.0.0/0"]
+      type                     = "egress"
+      from_port                = 2049
+      to_port                  = 2049
+      protocol                 = "tcp"
       source_security_group_id = module.efs.security_group_id
       description              = "Allow egress to EFS"
     }],
