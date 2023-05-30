@@ -23,9 +23,8 @@
 # Certbot Lambda
 # ---------------------------------------------------------------------------------------------------------------------
 module "lambda" {
-  #source     = "SevenPicoForks/lambda-function/aws"
-  #version    = "2.0.1"
-  source     = "git::https://github.com/SevenPicoForks/terraform-aws-lambda-function.git?ref=hotfix/add_file_system"
+  source     = "SevenPicoForks/lambda-function/aws"
+  version    = "2.0.2"
   context    = module.context.self
   attributes = ["lambda"]
   depends_on = [module.efs]
@@ -36,7 +35,7 @@ module "lambda" {
   cloudwatch_logs_kms_key_arn         = ""
   cloudwatch_logs_retention_in_days   = 90
   cloudwatch_log_subscription_filters = {}
-  description                         = "Lambda function to get certificate using Certbot and store it in SSL secrets"
+  description                         = "Lambda function to get certificate using Certbot and store it in SSL secrets."
   event_source_mappings               = {}
   filename                            = "${path.module}/lambda/certbot-1.17.0.zip"
   source_code_hash                    = filebase64sha256("${path.module}/lambda/certbot-1.17.0.zip")
