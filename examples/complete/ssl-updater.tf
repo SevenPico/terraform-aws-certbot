@@ -34,9 +34,8 @@ module "ssl_updater_context" {
 # OpenVPN
 #------------------------------------------------------------------------------
 module "ssl-update" {
-  #source  = "SevenPico/ssl-update/aws"
-  #version = "0.1.1"
-  source     = "git::https://github.com/SevenPico/terraform-aws-ssl-update.git?ref=feature/ssl_update_lambda_function"
+  source     = "registry.terraform.io/SevenPico/ssl-update/aws"
+  version    = "0.1.2"
   context    = module.ssl_updater_context.self
   depends_on = [module.certbot]
 

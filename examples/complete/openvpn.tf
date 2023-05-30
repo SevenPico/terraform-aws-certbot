@@ -23,7 +23,7 @@
 # OpenVPN Labels
 #------------------------------------------------------------------------------
 module "openvpn_context" {
-  source  = "SevenPico/context/null"
+  source  = "registry.terraform.io/SevenPico/context/null"
   version = "2.0.0"
   context = module.context.self
   name    = "vpn"

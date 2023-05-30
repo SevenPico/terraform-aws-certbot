@@ -9,7 +9,7 @@ module "cloudtrail_context" {
 }
 
 module "cloudtrail" {
-  source  = "SevenPicoForks/cloudtrail/aws"
+  source  = "registry.terraform.io/SevenPicoForks/cloudtrail/aws"
   version = "2.0.0"
   context = module.cloudtrail_context.self
 
