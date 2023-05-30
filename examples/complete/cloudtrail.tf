@@ -41,7 +41,7 @@ module "cloudtrail_log_storage" {
   kms_key_deletion_window_in_days   = 30
   kms_key_enable_key_rotation       = false
   lifecycle_configuration_rules     = var.cloudtrail_log_storage_lifecycle_rules
-  s3_object_ownership               = "BucketOwnerPreferred"
+  s3_object_ownership               = "BucketOwnerEnforced"
   s3_source_policy_documents        = []
   source_accounts                   = []
 }

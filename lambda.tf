@@ -28,6 +28,7 @@ module "lambda" {
   source     = "git::https://github.com/SevenPicoForks/terraform-aws-lambda-function.git?ref=hotfix/add_file_system"
   context    = module.context.self
   attributes = ["lambda"]
+  depends_on = [module.efs]
 
   architectures                       = null
   cloudwatch_event_rules              = {}
@@ -84,7 +85,7 @@ module "lambda" {
 }
 
 module "lambda_security_group" {
-  source  = "SevenPicoForks/security-group/aws"
+  source  = "registry.terraform.io/SevenPicoForks/security-group/aws"
   version = "3.0.0"
   context = module.context.self
   count   = module.context.enabled ? 1 : 0

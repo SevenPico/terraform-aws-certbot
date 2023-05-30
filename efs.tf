@@ -13,7 +13,7 @@ module "efs_context" {
 # EFS Module
 #------------------------------------------------------------------------------
 module "efs" {
-  source  = "SevenPicoForks/efs/aws"
+  source  = "registry.terraform.io/SevenPicoForks/efs/aws"
   version = "2.0.0"
   context = module.efs_context.self
 
@@ -50,6 +50,7 @@ module "efs" {
 
 resource "aws_security_group_rule" "default" {
   count                    = module.context.enabled ? 1 : 0
+  description              = "Security group rule to allow lambda function to access EFS."
   type                     = "ingress"
   from_port                = 2049
   to_port                  = 2049
