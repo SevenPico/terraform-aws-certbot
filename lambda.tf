@@ -23,7 +23,7 @@
 # Certbot Lambda
 # ---------------------------------------------------------------------------------------------------------------------
 module "lambda" {
-  source     = "SevenPicoForks/lambda-function/aws"
+  source     = "registry.terraform.io/SevenPicoForks/lambda-function/aws"
   version    = "2.0.2"
   context    = module.context.self
   attributes = ["lambda"]
