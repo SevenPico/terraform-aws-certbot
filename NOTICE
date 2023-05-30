@@ -1,0 +1,10 @@
+Copyright $year $corporation
+
+// Always include the next line
+This product includes software developed at SevenPico, Inc. (https://7pi.co/).
+
+// Include this line if most of the work is derived from something else
+The Initial Developer of the work from which some parts of this work is copied or derived, is SomeOtherCompany (https://www.someothercompany.com/). Copyright 2022 SomeOtherCompany. All Rights Reserved.
+
+// Also include this line as many times as necessary if there are a small number of specific files or files from different sources.
+The Initial Developer of the path/to/filename is SomeOtherCompany (https://www.someothercompany.com/). Copyright 2022 SomeOtherCompany. All Rights Reserved.
