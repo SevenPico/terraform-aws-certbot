@@ -111,7 +111,7 @@ module "openvpn" {
   ec2_role_source_policy_documents          = try(data.aws_iam_policy_document.openvpn_ec2_policy_doc[*].json, [])
   ec2_upgrade_schedule_expression           = "cron(15 13 ? * SUN *)"
   ec2_security_group_allow_all_egress       = true
-  ec2_security_group_rules = []
+  ec2_security_group_rules                  = []
 
   # NLB
   nlb_access_logs_prefix_override = null
