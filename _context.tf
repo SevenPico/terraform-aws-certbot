@@ -43,7 +43,7 @@
 #
 
 module "context" {
-  source  = "SevenPico/context/null"
+  source  = "registry.terraform.io/SevenPico/context/null"
   version = "2.0.0" # requires Terraform >= 0.13.0
 
   enabled             = var.enabled
