@@ -18,4 +18,22 @@
 ##  ./_outputs.tf
 ##  This file contains code written only by SevenPico, Inc.
 ## ----------------------------------------------------------------------------
+output "lambda_arn" {
+  value = module.lambda.arn
+}
 
+output "lambda_function_name" {
+  value = module.lambda.function_name
+}
+
+output "lambda_role_arn" {
+  value = module.lambda.role_arn
+}
+
+output "efs_arn" {
+  value = module.efs.arn
+}
+
+output "efs_security_group_id" {
+  value = module.efs.security_group_id
+}
