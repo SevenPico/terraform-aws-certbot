@@ -122,54 +122,67 @@ module "lambda_security_group" {
 data "aws_iam_policy_document" "default" {
   #checkov:skip=CKV_AWS_356:allow "*" as a statement's resource
   statement {
-    sid = "AllowSslSecretRead"
-    actions = [
-      "secretsmanager:GetSecretValue",
-      "secretsmanager:PutSecretValue",
-      "secretsmanager:UpdateSecret"
+    sid       = "AllowSslSecretRead"
+    actions   = [
+      "secretsmanager:GetSecretValue"
     ]
     resources = [var.target_secret_arn]
   }
   statement {
-    sid = "AllowSslSecretKeyAccess"
-    actions = [
+    sid       = "AllowSslSecretKeyAccess"
+    actions   = [
       "kms:GenerateDataKey",
       "kms:Decrypt"
     ]
     resources = [var.target_secret_kms_key_arn]
   }
   statement {
-    sid = "AllowRoute53Access"
-    actions = [
+    sid       = "AllowRoute53Access"
+    actions   = [
       "route53:ListHostedZones",
-      "route53:GetChange",
-      "route53:ChangeResourceRecordSets"
+      "route53:GetChange"
     ]
     resources = ["*"]
   }
   statement {
-    sid = "AllowVpcAccess"
-    actions = [
+    sid       = "AllowVpcAccess"
+    actions   = [
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
       "logs:PutLogEvents",
-      "ec2:CreateNetworkInterface",
       "ec2:DescribeNetworkInterfaces",
-      "ec2:DeleteNetworkInterface",
-      "ec2:AssignPrivateIpAddresses",
-      "ec2:UnassignPrivateIpAddresses"
+      "ec2:AssignPrivateIpAddresses"
     ]
     resources = ["*"]
   }
   statement {
-    sid = "AllowEfsAccess"
-    actions = [
-      "elasticfilesystem:ClientMount",
-      "elasticfilesystem:ClientRootAccess",
-      "elasticfilesystem:ClientWrite",
+    sid       = "AllowEfsAccess"
+    actions   = [
       "elasticfilesystem:DescribeMountTargets"
     ]
     resources = [module.efs.arn]
+  }
+  # Add the Deny statement to restrict write access
+  statement {
+    sid       = "DenyWriteAccess"
+    actions   = [
+      "secretsmanager:PutSecretValue",
+      "secretsmanager:UpdateSecret",
+      "route53:ChangeResourceRecordSets",
+      "logs:PutLogEvents",
+      "ec2:CreateNetworkInterface",
+      "ec2:DeleteNetworkInterface",
+      "ec2:UnassignPrivateIpAddresses",
+      "elasticfilesystem:ClientMount",
+      "elasticfilesystem:ClientRootAccess",
+      "elasticfilesystem:ClientWrite"
+    ]
+    resources = ["*"]
+    condition {
+      test     = "StringNotEquals"
+      variable = "aws:RequestedRegion"
+      values   = [local.region]  # Adjust the region(s) as needed
+    }
   }
 }
 
