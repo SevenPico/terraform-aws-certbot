@@ -120,6 +120,7 @@ module "lambda_security_group" {
 # Lambda IAM
 # ------------------------------------------------------------------------------
 data "aws_iam_policy_document" "default" {
+  #checkov:skip=CKV_AWS_356:allow "*" as a statement's resource
   statement {
     sid = "AllowSslSecretRead"
     actions = [
@@ -138,8 +139,6 @@ data "aws_iam_policy_document" "default" {
     resources = [var.target_secret_kms_key_arn]
   }
   statement {
-    #checkov:skip=CKV_AWS_111:skip allow write access without constraints
-    #checkov:skip=CKV_AWS_356:skip allow "*" as a statement's resource
     sid = "AllowRoute53Access"
     actions = [
       "route53:ListHostedZones",

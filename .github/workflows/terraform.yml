@@ -35,6 +35,13 @@ jobs:
 
       - name: terraform validate
         uses: dflook/terraform-validate@v1.31.1
+        with:
+          path: ./
+
+      - name: terraform validate (examples/complete)
+        uses: dflook/terraform-validate@v1.31.1
+        with:
+          path: ./examples/complete
 
   checkov:
     name: Run Bridgecrew.io scan
