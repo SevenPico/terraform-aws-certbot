@@ -122,67 +122,65 @@ module "lambda_security_group" {
 data "aws_iam_policy_document" "default" {
   #checkov:skip=CKV_AWS_356:allow "*" as a statement's resource
   statement {
-    sid       = "AllowSslSecretRead"
-    actions   = [
-      "secretsmanager:GetSecretValue"
+    sid = "AllowSslSecretRead"
+    effect = "Allow"
+    actions = [
+      "secretsmanager:GetSecretValue",
+      "secretsmanager:PutSecretValue",
+      "secretsmanager:UpdateSecret"
     ]
-    resources = [var.target_secret_arn]
+    resources = [
+      var.target_secret_arn
+    ]
   }
   statement {
-    sid       = "AllowSslSecretKeyAccess"
-    actions   = [
+    sid = "AllowSslSecretKeyAccess"
+    effect = "Allow"
+    actions = [
       "kms:GenerateDataKey",
       "kms:Decrypt"
     ]
-    resources = [var.target_secret_kms_key_arn]
+    resources = [
+      var.target_secret_kms_key_arn
+    ]
   }
   statement {
-    sid       = "AllowRoute53Access"
-    actions   = [
+    sid = "AllowRoute53Access"
+    effect = "Allow"
+    actions = [
       "route53:ListHostedZones",
-      "route53:GetChange"
+      "route53:GetChange",
+      "route53:ChangeResourceRecordSets"
     ]
     resources = ["*"]
   }
   statement {
-    sid       = "AllowVpcAccess"
-    actions   = [
+    sid = "AllowVpcAccess"
+    effect = "Allow"
+    actions = [
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
       "logs:PutLogEvents",
+      "ec2:CreateNetworkInterface",
       "ec2:DescribeNetworkInterfaces",
-      "ec2:AssignPrivateIpAddresses"
+      "ec2:DeleteNetworkInterface",
+      "ec2:AssignPrivateIpAddresses",
+      "ec2:UnassignPrivateIpAddresses"
     ]
     resources = ["*"]
   }
   statement {
-    sid       = "AllowEfsAccess"
-    actions   = [
-      "elasticfilesystem:DescribeMountTargets"
-    ]
-    resources = [module.efs.arn]
-  }
-  # Add the Deny statement to restrict write access
-  statement {
-    sid       = "DenyWriteAccess"
-    actions   = [
-      "secretsmanager:PutSecretValue",
-      "secretsmanager:UpdateSecret",
-      "route53:ChangeResourceRecordSets",
-      "logs:PutLogEvents",
-      "ec2:CreateNetworkInterface",
-      "ec2:DeleteNetworkInterface",
-      "ec2:UnassignPrivateIpAddresses",
+    sid = "AllowEfsAccess"
+    effect = "Allow"
+    actions = [
       "elasticfilesystem:ClientMount",
       "elasticfilesystem:ClientRootAccess",
-      "elasticfilesystem:ClientWrite"
+      "elasticfilesystem:ClientWrite",
+      "elasticfilesystem:DescribeMountTargets"
     ]
-    resources = ["*"]
-    condition {
-      test     = "StringNotEquals"
-      variable = "aws:RequestedRegion"
-      values   = [local.region]  # Adjust the region(s) as needed
-    }
+    resources = [
+      module.efs.arn
+    ]
   }
 }
 
