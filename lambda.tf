@@ -121,9 +121,9 @@ module "lambda_security_group" {
 # ------------------------------------------------------------------------------
 data "aws_iam_policy_document" "default" {
   #checkov:skip=CKV_AWS_356:allow "*" as a statement's resource
+  #checkov:skip=CKV_AWS_111:allow write access without constraints
   statement {
     sid = "AllowSslSecretRead"
-    effect = "Allow"
     actions = [
       "secretsmanager:GetSecretValue",
       "secretsmanager:PutSecretValue",
@@ -135,7 +135,6 @@ data "aws_iam_policy_document" "default" {
   }
   statement {
     sid = "AllowSslSecretKeyAccess"
-    effect = "Allow"
     actions = [
       "kms:GenerateDataKey",
       "kms:Decrypt"
@@ -146,7 +145,6 @@ data "aws_iam_policy_document" "default" {
   }
   statement {
     sid = "AllowRoute53Access"
-    effect = "Allow"
     actions = [
       "route53:ListHostedZones",
       "route53:GetChange",
@@ -156,7 +154,6 @@ data "aws_iam_policy_document" "default" {
   }
   statement {
     sid = "AllowVpcAccess"
-    effect = "Allow"
     actions = [
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
@@ -171,7 +168,6 @@ data "aws_iam_policy_document" "default" {
   }
   statement {
     sid = "AllowEfsAccess"
-    effect = "Allow"
     actions = [
       "elasticfilesystem:ClientMount",
       "elasticfilesystem:ClientRootAccess",
