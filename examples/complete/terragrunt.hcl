@@ -28,7 +28,7 @@ locals {
 
   namespace   = "brim"
   project     = "eff-certbot" //replace(basename(get_repo_root()), "teraform-", "")
-  environment = ""
+  environment = "eff-certbot"
   stage       = basename(get_terragrunt_dir()) //
   domain_name = "${local.stage}.${local.project}.${local.root_domain}"
 
@@ -40,7 +40,8 @@ locals {
   id_hash_length      = 5
   label_key_case      = "title"
   label_value_case    = "lower"
-  label_order         =  ["namespace", "project", "environment", "stage", "name", "attributes"]
+  #label_order         =  ["namespace", "project", "environment", "stage", "name", "attributes"]
+  label_order         = ["namespace", "environment", "stage", "name", "attributes"]
   dns_name_format     = "$${name}.$${domain_name}"
 }
 
