@@ -174,7 +174,7 @@ data "aws_iam_policy_document" "default" {
       "elasticfilesystem:ClientWrite",
       "elasticfilesystem:DescribeMountTargets"
     ]
-    resources = ["${module.efs.arn}"]
+    resources = ["*"]
   }
 }
 
