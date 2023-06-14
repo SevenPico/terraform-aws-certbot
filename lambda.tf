@@ -67,7 +67,7 @@ module "lambda" {
   memory_size                         = 512
   package_type                        = "Zip"
   publish                             = false
-  reserved_concurrent_executions      = 10
+  reserved_concurrent_executions      = var.reserved_concurrent_executions
   role_name                           = "${module.context.id}-lambda-role"
   runtime                             = "python3.9"
   s3_bucket                           = null

@@ -77,3 +77,9 @@ variable "acm_certificate_arn" {
   type        = string
   default     = ""
 }
+
+variable "reserved_concurrent_executions" {
+  description = "The amount of reserved concurrent executions for this lambda function. A value of 0 disables lambda from being triggered and -1 removes any concurrency limitations."
+  default     = -1
+  type        = number
+}
