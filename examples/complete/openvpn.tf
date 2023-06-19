@@ -55,9 +55,8 @@ data "aws_iam_policy_document" "openvpn_ec2_policy_doc" {
 # OpenVPN
 #------------------------------------------------------------------------------
 module "openvpn" {
-  #source  = "registry.terraform.io/SevenPico/openvpn/aws"
-  #version = "5.0.11"
-  source  = "git::https://github.com/SevenPico/terraform-aws-openvpn.git?ref=hotfix/5.0.12"
+  source  = "registry.terraform.io/SevenPico/openvpn/aws"
+  version = "5.0.12"
   context = module.ssl_updater_context.self
 
   # REQUIRED
