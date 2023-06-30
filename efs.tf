@@ -61,7 +61,7 @@ module "efs" {
   security_group_create_timeout        = "10m"
   security_group_delete_timeout        = "15m"
   security_group_description           = "EFS Security Group"
-  security_group_name                  = []
+  security_group_name                  = [module.efs_context.id]
   security_groups                      = []
   throughput_mode                      = "bursting"
   transition_to_ia                     = ["AFTER_30_DAYS"]

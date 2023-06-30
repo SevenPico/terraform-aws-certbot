@@ -84,10 +84,11 @@ module "lambda" {
 }
 
 module "lambda_security_group" {
-  count   = module.context.enabled ? 1 : 0
-  source  = "registry.terraform.io/SevenPicoForks/security-group/aws"
-  version = "3.0.0"
-  context = module.context.self
+  count      = module.context.enabled ? 1 : 0
+  source     = "registry.terraform.io/SevenPicoForks/security-group/aws"
+  version    = "3.0.0"
+  context    = module.context.self
+  attributes = ["lambda"]
 
   vpc_id                     = var.vpc_id
   allow_all_egress           = false
