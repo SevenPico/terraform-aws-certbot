@@ -179,7 +179,7 @@ data "aws_iam_policy_document" "default" {
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "ssl_certificate_expiry" {
   count               = module.context.enabled ? 1 : 0
-  alarm_name          = "certificate-expiration"
+  alarm_name          = "${module.context.id}-ssl-cert-expiration"
   comparison_operator = "LessThanOrEqualToThreshold"
   period              = "86400" #1 day in seconds
   evaluation_periods  = "1"
