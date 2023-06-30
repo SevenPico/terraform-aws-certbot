@@ -183,7 +183,7 @@ resource "aws_cloudwatch_metric_alarm" "ssl_certificate_expiry" {
   comparison_operator = "LessThanOrEqualToThreshold"
   period              = "86400" #1 day in seconds
   evaluation_periods  = "1"
-  threshold           = "20"
+  threshold           = "7"
   namespace           = "AWS/CertificateManager"
   metric_name         = "DaysToExpiry"
   statistic           = "Minimum"
