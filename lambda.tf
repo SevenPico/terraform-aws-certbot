@@ -113,7 +113,7 @@ module "lambda_security_group" {
       description              = "Allow egress to EFS"
     }],
   })
-  security_group_description = "Security group for ${module.context.id}."
+  security_group_description = "Security group for ${module.context.id}-lambda."
 }
 
 
