@@ -67,7 +67,7 @@ module "lambda" {
   memory_size                         = 512
   package_type                        = "Zip"
   publish                             = false
-  reserved_concurrent_executions      = 10
+  reserved_concurrent_executions      = var.reserved_concurrent_executions
   role_name                           = "${module.context.id}-lambda-role"
   runtime                             = "python3.9"
   s3_bucket                           = null
@@ -84,10 +84,11 @@ module "lambda" {
 }
 
 module "lambda_security_group" {
-  count   = module.context.enabled ? 1 : 0
-  source  = "registry.terraform.io/SevenPicoForks/security-group/aws"
-  version = "3.0.0"
-  context = module.context.self
+  count      = module.context.enabled ? 1 : 0
+  source     = "registry.terraform.io/SevenPicoForks/security-group/aws"
+  version    = "3.0.0"
+  context    = module.context.self
+  attributes = ["lambda"]
 
   vpc_id                     = var.vpc_id
   allow_all_egress           = false
@@ -112,7 +113,7 @@ module "lambda_security_group" {
       description              = "Allow egress to EFS"
     }],
   })
-  security_group_description = "Security group for ${module.context.id}."
+  security_group_description = "Security group for ${module.context.id}-lambda."
 }
 
 
@@ -178,11 +179,11 @@ data "aws_iam_policy_document" "default" {
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "ssl_certificate_expiry" {
   count               = module.context.enabled ? 1 : 0
-  alarm_name          = "certificate-expiration"
+  alarm_name          = "${module.context.id}-ssl-cert-expiration"
   comparison_operator = "LessThanOrEqualToThreshold"
   period              = "86400" #1 day in seconds
   evaluation_periods  = "1"
-  threshold           = "20"
+  threshold           = "7"
   namespace           = "AWS/CertificateManager"
   metric_name         = "DaysToExpiry"
   statistic           = "Minimum"
