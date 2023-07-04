@@ -120,6 +120,8 @@ module "lambda_security_group" {
 # Lambda IAM
 # ------------------------------------------------------------------------------
 data "aws_iam_policy_document" "default" {
+  #checkov:skip=CKV_AWS_356:allow "*" as a statement's resource
+  #checkov:skip=CKV_AWS_111:allow write access without constraints
   statement {
     sid = "AllowSslSecretRead"
     actions = [
@@ -127,7 +129,9 @@ data "aws_iam_policy_document" "default" {
       "secretsmanager:PutSecretValue",
       "secretsmanager:UpdateSecret"
     ]
-    resources = [var.target_secret_arn]
+    resources = [
+      var.target_secret_arn
+    ]
   }
   statement {
     sid = "AllowSslSecretKeyAccess"
@@ -135,7 +139,9 @@ data "aws_iam_policy_document" "default" {
       "kms:GenerateDataKey",
       "kms:Decrypt"
     ]
-    resources = [var.target_secret_kms_key_arn]
+    resources = [
+      var.target_secret_kms_key_arn
+    ]
   }
   statement {
     sid = "AllowRoute53Access"
