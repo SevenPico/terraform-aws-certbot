@@ -34,8 +34,9 @@ module "efs_context" {
 # EFS Module
 #------------------------------------------------------------------------------
 module "efs" {
-  source  = "registry.terraform.io/SevenPicoForks/efs/aws"
-  version = "2.0.0"
+  #source  = "registry.terraform.io/SevenPicoForks/efs/aws"
+  #version = "2.0.0"
+  source  = "git::https://github.com/SevenPicoForks/terraform-aws-efs.git?ref=hotfix/security_group_fix"
   context = module.efs_context.self
 
   #required
@@ -61,7 +62,7 @@ module "efs" {
   security_group_create_timeout        = "10m"
   security_group_delete_timeout        = "15m"
   security_group_description           = "EFS Security Group for ${module.efs_context.id}"
-  security_group_name                  = [module.efs_context.id]
+  security_group_name                  = []
   security_groups                      = []
   throughput_mode                      = "bursting"
   transition_to_ia                     = ["AFTER_30_DAYS"]
