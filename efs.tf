@@ -34,9 +34,8 @@ module "efs_context" {
 # EFS Module
 #------------------------------------------------------------------------------
 module "efs" {
-  #source  = "registry.terraform.io/SevenPicoForks/efs/aws"
-  #version = "2.0.0"
-  source  = "git::https://github.com/SevenPicoForks/terraform-aws-efs.git?ref=hotfix/security_group_fix"
+  source  = "registry.terraform.io/SevenPicoForks/efs/aws"
+  version = "2.0.1"
   context = module.efs_context.self
 
   #required
