@@ -24,7 +24,7 @@
 # ---------------------------------------------------------------------------------------------------------------------
 module "lambda" {
   source     = "registry.terraform.io/SevenPicoForks/lambda-function/aws"
-  version    = "2.0.2"
+  version    = "2.0.3"
   context    = module.context.self
   attributes = ["lambda"]
   depends_on = [module.efs]
