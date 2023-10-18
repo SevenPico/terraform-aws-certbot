@@ -62,7 +62,7 @@ module "lambda" {
       KEYNAME_CERTIFICATE_SIGNING_REQUEST : var.ssl_secret_keyname_certificate_signing_request
     })
   }
-  lambda_role_source_policy_documents = [data.aws_iam_policy_document.default.json]
+  lambda_role_source_policy_documents = try([data.aws_iam_policy_document.default[0].json], [])
   layers                              = []
   memory_size                         = 512
   package_type                        = "Zip"
@@ -123,6 +123,7 @@ module "lambda_security_group" {
 data "aws_iam_policy_document" "default" {
   #checkov:skip=CKV_AWS_356:skipping 'Ensure no IAM policies documents allow "*" as a statement's resource for restrictable actions'
   #checkov:skip=CKV_AWS_111:skipping 'Ensure IAM policies does not allow write access without constraints'
+  count = module.context.enabled ? 1 : 0
   statement {
     sid = "AllowSslSecretRead"
     actions = [
