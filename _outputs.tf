@@ -37,3 +37,7 @@ output "efs_arn" {
 output "efs_security_group_id" {
   value = module.efs.security_group_id
 }
+
+output "lambda_log_group" {
+  value = module.lambda.cloudwatch_log_group
+}
