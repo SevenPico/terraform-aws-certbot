@@ -30,7 +30,7 @@ locals {
   project     = "certbot" //replace(basename(get_repo_root()), "teraform-", "")
   environment = ""
   stage       = basename(get_terragrunt_dir()) //
-  domain_name = "${local.stage}.${local.project}.${local.root_domain}"
+  domain_name = "${local.project}.${local.root_domain}" #"${local.stage}.${local.project}.${local.root_domain}"
 
   tags = { Source = "Managed by Terraform" }
   regex_replace_chars = "/[^-a-zA-Z0-9]/"
