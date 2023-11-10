@@ -98,15 +98,17 @@ def upload_certs(secret_arn, kms_key_arn, domain_for_directory):
     with open(f"{CERTBOT_DIR}/csr/0000_csr-certbot.pem") as f:
         csr_value = f.read()
 
-    secret_data = {
-        cert: cert_value,
-        privkey: privkey_value,
-        chain: chain_value,
-        csr: csr_value
-    }
     client = boto3.client('secretsmanager')
-    secret_value = json.dumps(secret_data)
-    client.update_secret(SecretId=secret_arn, KmsKeyId=kms_key_arn, SecretString=secret_value)
+    response = client.get_secret_value(SecretId=secret_arn)
+    secret_data = json.loads(response['SecretString'])
+
+    secret_data[cert] = cert_value
+    secret_data[privkey] = privkey_value
+    secret_data[chain] = chain_value
+    secret_data[csr] = csr_value
+
+    updated_secret_value = json.dumps(secret_data)
+    client.put_secret_value(SecretId=secret_arn, SecretString=updated_secret_value)
 
 
 def upload_into_efs():
